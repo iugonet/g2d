@@ -1,0 +1,132 @@
+Catalog
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ AccessInformation AccessURL URL
+$ TimeSpan StartDate
+$ TimeSpan StopDate
+$ TimeSpan RelativeStopDate
+DisplayData
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ AccessInformation AccessURL URL
+$ TemporalDescription TimeSpan StartDate
+$ TemporalDescription TimeSpan StopDate
+$ TemporalDescription TimeSpan RelativeStopDate
+NumericalData
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ ResourceHeader AlternateName
+$ ResourceHeader ReleaseDate
+$ ResourceHeader ExpirationDate
+$ ResourceHeader Contact PersonID
+$ ResourceHeader Contact Role
+$ TemporalDescription TimeSpan StartDate
+$ TemporalDescription TimeSpan StopDate
+$ TemporalDescription TimeSpan RelativeStopDate
+$ AccessInformation AccessURL URL
+$ AccessInformation Availability
+$ AccessInformation AccessRights
+$ AccessInformation Format
+$ ProcessingLevel
+$ InstrumentID
+$ MeasurementType
+$ TemporalDescription TimeSpan StartDate
+$ TemporalDescription TimeSpan StopDate
+$ ObservedRegion
+$ Parameter Name
+$ Parameter Description
+$ Keyword
+$ SpatialCoverage CoordinateSystem CoordinateRepresentation
+$ SpatialCoverage CoordinateSystem CoordinateSystemName
+$ SpatialCoverage NorthernmostLatitude
+$ SpatialCoverage SouthernmostLatitude
+$ SpatialCoverage EasternmostLongitude
+$ SpatialCoverage WesternmostLongitude
+$ SpatialCoverage CenterLatitude
+$ SpatialCoverage CenterLongitude
+$ SpatialCoverage Unit
+$ SpatialCoverage MinimumAltitude
+$ SpatialCoverage MaximumAltitude
+$ SpatialCoverage Reference
+Instrument
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ ResourceHeader ReleaseDate
+$ ResourceHeader ExpirationDate
+$ ResourceHeader Contact PersonID
+$ ResourceHeader Contact Role
+$ InstrumentType
+$ ObservatoryID
+$ InvestigationName
+Observatory
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ ResourceHeader ReleaseDate
+$ ResourceHeader ExpirationDate
+$ ResourceHeader Contact PersonID
+$ ResourceHeader Contact Role
+$ ResourceHeader InformationURL URL
+$ Location ObservatoryRegion
+$ Location CoordinateSystemName
+$ Location Latitude
+$ Location Longitude
+Person
+$ ResourceID
+$ ReleaseDate
+$ PersonName
+$ OrganizationName
+$ Email
+Repository
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ AccessURL URL
+Document
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ AccessInformation AccessURL URL
+Registry
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ AccessURL URL
+Service
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ AccessURL URL
+Annotation
+$ ResourceID
+$ ResourceHeader ResourceName
+$ ResourceHeader Description
+$ TimeSpan StartDate
+$ TimeSpan StopDate
+$ TimeSpan RelativeStopDate
+Granule
+$ ResourceID
+$ ReleaseDate
+$ ExpirationDate
+$ ParentID
+$ StartDate
+$ StopDate
+$ Source SourceType
+$ Source URL
+$ SpatialCoverage CoordinateSystem CoordinateRepresentation
+$ SpatialCoverage CoordinateSystem CoordinateSystemName
+$ SpatialCoverage NorthernmostLatitude
+$ SpatialCoverage SouthernmostLatitude
+$ SpatialCoverage EasternmostLongitude
+$ SpatialCoverage WesternmostLongitude
+$ SpatialCoverage CenterLatitude
+$ SpatialCoverage CenterLongitude
+$ SpatialCoverage Unit
+$ SpatialCoverage MinimumAltitude
+$ SpatialCoverage MaximumAltitude
+$ SpatialCoverage Reference
+
