@@ -109,7 +109,7 @@ class ItemReplace
      sdir = tdir
 
      mapfile = tdir + "/mapfile"
-     fw.printf("%s -d -e %s -c %d -s %s -m %s\n",
+     fw.printf("%s -r -e %s -c %d -s %s -m %s\n",
                 Command, EMail, ha, sdir, mapfile )
      ii = ii + 1
    end
@@ -119,5 +119,11 @@ class ItemReplace
    File.chmod( 0755, frf )
 
  end
- 
+
+ def runReplace
+   Dir.chdir( @pwd )
+   com = sprintf( "./%s", Runfile )
+   system( com )
+ end
+
 end

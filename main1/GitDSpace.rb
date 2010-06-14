@@ -190,6 +190,27 @@ class GitDSpace
    fw.close
  end
 
+ def deleteHandleID( file )
+   hList = Aarray.new
+   fr = open( @itemHandleFile, "r" )
+   fr.each { |line|
+     hList << (line.chomp).strip
+   }
+   fr.close
+   ii = -1
+   for i in 0..hList.size-1
+     il = hList[i].split(" ")
+     if il[0] == file
+        ii = i
+        break
+     end
+   end
+   if ii != -1
+     hList.delete_at(ii)
+     puts "Delete Item: " + file
+   end
+ end
+
  def getHandleID( file )
    hList = Array.new
    fr = open( @itemHandleFile, "r" )
@@ -240,38 +261,5 @@ class GitDSpace
      end
    end
  end
-
-=begin
- def getCommitID( repo )
-   i = -1
-   for j in 0..@repoList.size-1
-     if @repoList[j] == repo
-        i = j
-     end
-   end
-   el = ""
-   if i == -1
-     return nil
-   else
-     cf = @repo[i] + "/" + $commit_log
-     begin
-       fr = open( cf, "r" )
-       fr.each { |line|
-         el = (line.chomp).strip
-       }
-       fr.close
-     rescue
-       el = nil
-     end
-   end
-   return el
- end
-=end
-
-=begin
- def setCommitID( repo, id )
- end
-=end
-
 
 end
