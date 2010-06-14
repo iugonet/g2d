@@ -95,8 +95,8 @@ class ItemImport
 
         s2d.conv( list[i], mdir )
 
-        fg = tdir+"/impfile"
-        fg = open( fg, "a" )
+        p = tdir+"/impfile"
+        fg = open( p, "a" )
         fg.printf( "%d %s\n", i, list[i] )
         fg.close
 

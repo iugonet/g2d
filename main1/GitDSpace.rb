@@ -190,7 +190,7 @@ class GitDSpace
    fw.close
  end
 
- def getHandleID( dir )
+ def getHandleID( file )
    hList = Array.new
    fr = open( @itemHandleFile, "r" )
    fr.each { |line|
@@ -199,7 +199,7 @@ class GitDSpace
    fr.close
    for i in 0..hList.size-1
      il = hList[i].split(" ")
-     if il[0] == dir
+     if il[0] == file
         return il[1]
      end
    end
