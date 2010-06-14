@@ -1,9 +1,12 @@
 # -*- coding : utf-8 -*-
 require 'fileutils'
 require 'tempfile'
-require 'Spase2DSpace'
 
-class ItemReplacer
+require 'main2/Spase2DSpace'
+
+class ItemReplace
+
+ EXC = "Metadata_Draft"
 
  $exc = "/home/odc/kouno/iugonet_git/WorkingDir/Metadata_Draft"
  $log_dir = "/gitlog/test_import"

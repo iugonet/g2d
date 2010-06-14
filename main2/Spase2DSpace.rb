@@ -54,7 +54,6 @@ class Spase2DSpace
  def readList( file )
    fr = open( file, "r" )
    fr.each { |line|
-     puts line
      sline = line.strip
      slen = sline.length
      if slen != 0

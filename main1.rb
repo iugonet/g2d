@@ -43,5 +43,5 @@ sb.import
 ii = ItemImport.new( pwd, repo.getWorkDir, gSpace )
 ii.setFileList( aState.getAddList )
 ii.makeImport
-#ii.runImport
-
+ii.runImport
+ii.setMapfile

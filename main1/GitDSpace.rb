@@ -163,6 +163,7 @@ class GitDSpace
         jl = stList[j].split(" ")
         if il[0] == jl[0] || il[1] == jl[1]
            puts "Error: structure"
+           exit(0)
         end
      end
    end
@@ -187,6 +188,57 @@ class GitDSpace
    fw = open( cf, "w" )
    fw.puts id
    fw.close
+ end
+
+ def getHandleID( dir )
+   hList = Array.new
+   fr = open( @itemHandleFile, "r" )
+   fr.each { |line|
+      hList << (line.chomp).strip
+   }
+   fr.close
+   for i in 0..hList.size-1
+     il = hList[i].split(" ")
+     if il[0] == dir
+        return il[1]
+     end
+   end
+ end
+
+ def setHandleID( list )
+  hList = Array.new
+  fr = open( @itemHandleFile, "r" )
+  fr.each { |line|
+    hList << (line.chomp).strip
+  }
+  fr.close
+  wList = hList + list
+  wList.uniq!
+  fw = open( @itemHandleFile, "w" )
+  for i in 0..wList.size-1
+    fw.puts wList[i]
+  end
+  fw.close
+  checkItemHandle()
+ end
+
+ def checkItemHandle()
+   hList = Array.new
+   fr = open( @itemHandleFile, "r" )
+   fr.each { |line|
+     hList << (line.chomp).strip
+   }
+   fr.close
+   for i in 0..hList.size-2
+      il = hList[i].split(" ")
+     for j in i+1..hList.size-1
+       jl = hList[i].split(" ")
+       if il[0] == jl[0] || il[1] == jl[1]
+          puts "Error: item handle."
+          exit(0)
+       end
+     end
+   end
  end
 
 =begin

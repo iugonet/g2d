@@ -47,7 +47,7 @@ class ItemImport
    s2d.getQueryList
    frf = @pwd + "/" + Runfile
    fw = open( frf, "w" )
-   fw.puts "#/bin/bash"
+   fw.puts "#!/bin/bash"
    fw.puts ""
 
    ii = 0
@@ -97,7 +97,7 @@ class ItemImport
 
         fg = tdir+"/impfile"
         fg = open( fg, "a" )
-        fg.printf( "%d %s", i, list[i] )
+        fg.printf( "%d %s\n", i, list[i] )
         fg.close
 
      end
@@ -113,13 +113,12 @@ class ItemImport
    end
 
    fw.close
+   Dir.chdir( @pwd )
    File.chmod( 0755, frf )
  end
 
  def runImport
-   Dir.glob(DelTempBase).each{|name|
-     FileUtils.rm_rf( name )
-   }
+   Dir.chdir( @pwd )
    com = sprintf( "./%s", Runfile )
    system( com )
  end
@@ -136,17 +135,21 @@ class ItemImport
       mapfile = name + "/mapfile"
       fr = open( mapfile, "r" )
       fr.each {|line|
+         if ((line.chomp).strip).size != 0
          ml << (line.chomp).strip
+         end
       }
       fr.close
       p = name + "/impfile"
       fr = open( p, "r" )
       fr.each {|line|
+         if ((line.chomp).strip).size != 0
          pl << (line.chomp).strip
+         end
       }
       fr.close
       if ml.size != pl.size
-        puts "Error"
+        puts "Error: " + name
         exit(0)
       end
       for i in 0..ml.size-1
@@ -157,9 +160,7 @@ class ItemImport
       FileUtils.rm_rf( name )
    }
 
-   for i in 0..newList.size-1
-      puts newList[i]
-   end
+   gSpace.setHandleID( newList )
 
  end
 
