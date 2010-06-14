@@ -97,6 +97,7 @@ class ItemImport
 
         p = tdir+"/impfile"
         fg = open( p, "a" )
+        list[i].slice!(0,len+1)
         fg.printf( "%d %s\n", i, list[i] )
         fg.close
 
@@ -104,8 +105,6 @@ class ItemImport
 
      sdir = tdir
 
-#     mapf = sprintf( MapFormat, ii )
-#     mapfile = tdir + "/" + mapf
      mapfile = tdir + "/mapfile"
      fw.printf("%s -a -e %s -c %s -s %s -m %s\n",
                Command, EMail, ha, sdir, mapfile )
@@ -124,14 +123,10 @@ class ItemImport
  end
 
  def setMapfile
-
    newList = Array.new
-
    Dir.glob(DelTempBase).each{|name|
-
       ml = Array.new
       pl = Array.new
-
       mapfile = name + "/mapfile"
       fr = open( mapfile, "r" )
       fr.each {|line|
@@ -159,9 +154,7 @@ class ItemImport
       end
       FileUtils.rm_rf( name )
    }
-
-   gSpace.setHandleID( newList )
-
+   @gSpace.setHandleID( newList )
  end
 
 end

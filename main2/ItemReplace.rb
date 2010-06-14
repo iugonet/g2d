@@ -29,7 +29,7 @@ class ItemReplace
 
    @stHash = Hash.new
    for i in 0..@stList.size-1
-     la = @stList[i].size-1
+     la = @stList[i].split(" ")
      if la.length == 2
         @stHash[ la[0].strip ] = la[1].strip
      end
@@ -50,7 +50,7 @@ class ItemReplace
    fw.puts ""
 
    ii = 0
-   while ( @replaceList.size-1 > 0 )
+   while ( @replaceList.size > 0 )
      tempFile = Tempfile.new( TempBase, @pwd )
      tdir = tempFile.path
      tempFile.close( true )
@@ -85,7 +85,7 @@ class ItemReplace
      for i in 0..list.size-1
         mdir = tdir + "/" + (i+1).to_s
         Dir.mkdir( mdir )
-        FileUtils.install( list[i],mkdir,:mode=>0644)
+        FileUtils.install( list[i],mdir,:mode=>0644)
         cfile = mdir + "/" + "contents"
         fwc = open( cfile, "w" )
         fwc.puts File.basename(list[i])
@@ -99,7 +99,8 @@ class ItemReplace
         fg.close
 
         list[i].slice!(0,len+1)
-        id = gSpace.getHandleID( list[i] )
+        id = @gSpace.getHandleID( list[i] )
+        puts "id : " + id.to_s
         fim = tdir + "/mapfile"
         fg = open( fim, "a" )
         fg.printf("%d %s\n", i+1, id )
@@ -109,7 +110,7 @@ class ItemReplace
      sdir = tdir
 
      mapfile = tdir + "/mapfile"
-     fw.printf("%s -r -e %s -c %d -s %s -m %s\n",
+     fw.printf("%s -r -e %s -c %s -s %s -m %s\n",
                 Command, EMail, ha, sdir, mapfile )
      ii = ii + 1
    end

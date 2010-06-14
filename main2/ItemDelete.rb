@@ -38,16 +38,20 @@ class ItemDelete
 
    mapfile = @pwd + "/delete_mapfile"
    fm = open( mapfile, "w" )
-   rdir = @pwd + "/" + @workDir + "/" +EXC
+   rdir = @pwd + "/" + @workDir + "/" + EXC
    len = rdir.length
    for i in 0..@deleteList.size-1
-     id = gSpace.getHandleID( deleteList.slice!(0,len+1) )
+     @deleteList[i].slice!(0,len+1)
+     id = @gSpace.getHandleID( @deleteList[i] )
      fm.printf("%d %s\n", i+1, id )
+     @gSpace.deleteHandleID2( @deleteList[i], id )
    end
    fm.close
 
-   fw.printf( "%s -d -e %s -m %s\n",
-              Command, EMail, mapfile )
+   if @deleteList.size > 0
+     fw.printf( "%s -d -e %s -m %s\n",
+                Command, EMail, mapfile )
+   end
    fw.close
    Dir.chdir( @pwd )
    File.chmod( 0755, frf )

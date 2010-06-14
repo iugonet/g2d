@@ -7,6 +7,8 @@ require 'main1/GitDSpace'
 require 'main2/ActionState'
 require 'main2/StructBuilder'
 require 'main2/ItemImport'
+require 'main2/ItemReplace'
+require 'main2/ItemDelete'
 
 GitCommand = "git"
 
@@ -45,3 +47,13 @@ ii.setFileList( aState.getAddList )
 ii.makeImport
 ii.runImport
 ii.setMapfile
+
+ir = ItemReplace.new( pwd, repo.getWorkDir, gSpace )
+ir.setFileList( aState.getReplaceList )
+ir.makeReplace
+ir.runReplace
+
+id = ItemDelete.new( pwd, repo.getWorkDir, gSpace )
+id.setFileList( aState.getDeleteList )
+id.makeDelete
+id.runDelete

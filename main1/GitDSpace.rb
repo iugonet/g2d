@@ -190,6 +190,35 @@ class GitDSpace
    fw.close
  end
 
+ def deleteHandleID2( file, id )
+   hList = Array.new
+   fr = open( @itemHandleFile, "r" )
+   fr.each { |line|
+      hList << (line.chomp).strip
+   }
+   fr.close
+   ii = -1
+   for i in 0..hList.size-1
+     il = hList[i].split(" ")
+     if il[0] == file && il[1] == id
+        ii = i
+        break
+     end
+   end
+   if ii != -1
+     hList.delete_at(ii)
+     puts "Delete Item: " + file
+     fw = open( @itemHandleFile, "w" )
+     for i in 0..hList.size-1
+        fw.puts hList[i]
+     end
+     fw.close
+   else
+     puts "Error: delete item: " + file
+     exit(0)
+   end
+ end
+
  def deleteHandleID( file )
    hList = Aarray.new
    fr = open( @itemHandleFile, "r" )
@@ -208,6 +237,14 @@ class GitDSpace
    if ii != -1
      hList.delete_at(ii)
      puts "Delete Item: " + file
+     fw = open( @itemHandleFile, "w" )
+     for i in 0..hList.size-1
+       fw.puts hList[i]
+     end
+     fw.close
+   else
+     puts "Error: delete item: " + file
+     exit(0)
    end
  end
 
@@ -216,11 +253,14 @@ class GitDSpace
    fr = open( @itemHandleFile, "r" )
    fr.each { |line|
       hList << (line.chomp).strip
+      puts line
    }
    fr.close
    for i in 0..hList.size-1
      il = hList[i].split(" ")
+     puts il[0] + " : " + file
      if il[0] == file
+        puts il[1]
         return il[1]
      end
    end
@@ -253,9 +293,11 @@ class GitDSpace
    for i in 0..hList.size-2
       il = hList[i].split(" ")
      for j in i+1..hList.size-1
-       jl = hList[i].split(" ")
+       jl = hList[j].split(" ")
        if il[0] == jl[0] || il[1] == jl[1]
           puts "Error: item handle."
+          puts il[0] + " : " + jl[0]
+          puts il[1] + " : " + jl[1]
           exit(0)
        end
      end
