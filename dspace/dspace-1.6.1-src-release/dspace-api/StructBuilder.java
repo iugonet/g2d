@@ -57,6 +57,7 @@ import org.dspace.content.Collection;
 import org.dspace.content.Community;
 import org.dspace.core.Context;
 import org.dspace.eperson.EPerson;
+import org.dspace.handle.HandleManager;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Document;
@@ -119,15 +120,21 @@ public class StructBuilder
 
     	Options options = new Options();
 
-    	options.addOption( "f", "file", true, "file");
-    	options.addOption( "e", "eperson", true, "eperson");
-    	options.addOption("o", "output", true, "output");
-    	
+    	options.addOption( "f", "file",     true, "file");
+    	options.addOption( "e", "eperson",  true, "eperson");
+    	options.addOption( "o", "output",   true, "output");
+        options.addOption( "h", "handleID", true, "handleID" );
+        options.addOption( "t", "type",     true, "type" );
+        options.addOption( "d", "deleteID",   true, "deleteID" );
+   	
     	CommandLine line = parser.parse( options, argv );
     	
     	String file = null;
     	String eperson = null;
     	String output = null;
+        String handleID = null;
+        String type     = null;
+        String deleteID = null;
     	
     	if (line.hasOption('f'))
     	{
@@ -143,6 +150,16 @@ public class StructBuilder
     	{
     	    output = line.getOptionValue('o');
     	}
+
+        if ( line.hasOption('h') ) {
+            handleID = line.getOptionValue('h');
+        }
+        if ( line.hasOption('t') ) {
+            type     = line.getOptionValue('t');
+        }
+        if ( line.hasOption('d') ) {
+            deleteID = line.getOptionValue('d');
+        }
     	
     	if (output == null || eperson == null || file == null)
     	{
@@ -179,10 +196,43 @@ public class StructBuilder
         collectionMap.put("provenance", "provenance_description");
         
         // get the top level community list
-        NodeList first = XPathAPI.selectNodeList(document, "/import_structure/community");
-        
+//        NodeList first = XPathAPI.selectNodeList(document, "/import_structure/community");
+
+        if ( deleteID != null && !deleteID.equals("null") ) {
+           if ( handleID != null && !handleID.equals("null") && !handleID.equals(deleteID) ) {
+             Community comm = (Community)HandleManager.resolveToObject( context, handleID );
+             Collection coll = (Collection)HandleManager.resolveToObject( context, deleteID );
+             comm.removeCollection( coll );
+             context.complete();
+             System.exit(0);
+           }
+           else {
+             Community comm = (Community)HandleManager.resolveToObject( context, deleteID );
+             comm.delete();
+             context.complete();
+             System.exit(0);
+           }
+        }
+
+        NodeList first = null;
+        Element[] elements;
+        if ( "collection".equals(type) ) {
+          first = XPathAPI.selectNodeList(document, "/import_structure/collection");
+          Community comm = (Community)HandleManager.resolveToObject( context, handleID );
+          elements = handleCollections(context, first, comm );
+        }
+        else {
+          first = XPathAPI.selectNodeList(document, "/import_structure/community");
+          if ( handleID != null && !handleID.equals("null") ) {
+            Community comm = (Community)HandleManager.resolveToObject( context, handleID );
+            elements = handleCommunities(context, first, comm );
+          }
+          else {
+            elements = handleCommunities(context, first, null);
+          }
+        }
         // run the import starting with the top level communities
-        Element[] elements = handleCommunities(context, first, null);
+        //Element[] elements = handleCommunities(context, first, null);
         
         // generate the output
         Element root = xmlOutput.getRootElement();
@@ -234,26 +284,28 @@ public class StructBuilder
         err.append("The following errors were encountered parsing the source XML\n");
         err.append("No changes have been made to the DSpace instance\n\n");
         
-        NodeList first = XPathAPI.selectNodeList(document, "/import_structure/community");
-        if (first.getLength() == 0)
+        NodeList first1 = XPathAPI.selectNodeList(document, "/import_structure/community");
+        NodeList first2 = XPathAPI.selectNodeList(document, "/import_structure/collection");
+        if ( first1.getLength() == 0 && first2.getLength() == 0 )
         {
             err.append("-There are no top level communities in the source document");
             System.out.println(err.toString());
             System.exit(0);
         }
         
-        String errs = validateCommunities(first, 1);
+        String errs = validateCommunities(first1, 1);
         if (errs != null)
         {
             err.append(errs);
             trip = true;
         }
-        
+        /*
         if (trip)
         {
             System.out.println(err.toString());
             System.exit(0);
         }
+*/
     }
     
     /**
