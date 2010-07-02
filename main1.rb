@@ -38,22 +38,23 @@ aState = ActionState.new( pwd )
 aState.sift
 aState.test
 
-sb = StructBuilder.new( pwd, repo.getWorkDir, gSpace )
-sb.setFileList( aState.getAddList )
-sb.import
+structure = StructBuilder.new( pwd, repo.getWorkDir, gSpace )
+structure.setFileList( aState.getAddList )
+structure.build
 
-ii = ItemImport.new( pwd, repo.getWorkDir, gSpace )
-ii.setFileList( aState.getAddList )
-ii.makeImport
-ii.runImport
-ii.setMapfile
+item_import = ItemImport.new( pwd, repo.getWorkDir, gSpace )
+item_import.setFileList( aState.getAddList )
+item_import.make
+item_import.run
+item_import.setMapfile
 
-ir = ItemReplace.new( pwd, repo.getWorkDir, gSpace )
-ir.setFileList( aState.getReplaceList )
-ir.makeReplace
-ir.runReplace
+item_replace = ItemReplace.new( pwd, repo.getWorkDir, gSpace )
+item_replace.setFileList( aState.getReplaceList )
+item_replace.make
+item_replace.run
 
-id = ItemDelete.new( pwd, repo.getWorkDir, gSpace )
-id.setFileList( aState.getDeleteList )
-id.makeDelete
-id.runDelete
+item_delete = ItemDelete.new( pwd, repo.getWorkDir, gSpace )
+item_delete.setFileList( aState.getDeleteList )
+item_delete.make
+item_delete.run
+item_delete.updateMapfile

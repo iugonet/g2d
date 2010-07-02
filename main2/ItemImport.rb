@@ -3,27 +3,23 @@ require 'fileutils'
 require 'tempfile'
 
 require 'main2/Spase2DSpace'
+require 'main2/DSpace'
+require 'main2/ScriptMaker'
+
 
 class ItemImport
 
  EXC = "Metadata_Draft"
-
- TempBase = "ImportData_"
-
- Command = "/opt/dspace/bin/import"
- EMail = "kouno@stelab.nagoya-u.ac.jp"
-
- MapFormat = "dspace_mapfile_%05d"
-
- DelTempBase = "ImportData_*"
- DelMapFormat = "dspace_mapfile_*"
-
+ TempBase    = "ImportData_"
+ TempBaseAll = "ImportData_*"
  Runfile = "runImport.sh"
 
  def initialize( pwd, workDir, gSpace )
    @pwd = pwd
    @workDir = workDir
    @gSpace = gSpace
+
+   @ds = DSpace.new( @pwd )
 
    @stList = @gSpace.readStruct()
 
@@ -40,15 +36,13 @@ class ItemImport
    @addList = addList
  end
  
- def makeImport()
+ def make()
+   frf = @pwd + "/" + Runfile
+   sm = ScriptMaker.new( frf )
 
    s2d = Spase2DSpace.new( @pwd )
    s2d.checkLength
    s2d.getQueryList
-   frf = @pwd + "/" + Runfile
-   fw = open( frf, "w" )
-   fw.puts "#!/bin/bash"
-   fw.puts ""
 
    ii = 0
    while ( @addList.size > 0 )
@@ -100,59 +94,57 @@ class ItemImport
         list[i].slice!(0,len+1)
         fg.printf( "%d %s\n", i, list[i] )
         fg.close
-
      end
 
      sdir = tdir
 
      mapfile = tdir + "/mapfile"
-     fw.printf("%s -a -e %s -c %s -s %s -m %s\n",
-               Command, EMail, ha, sdir, mapfile )
+     cstr = @ds.getImportCommand( ha, sdir, mapfile )
+     sm.puts( cstr )
      ii = ii + 1
    end
 
-   fw.close
+   sm.finalize
    Dir.chdir( @pwd )
-   File.chmod( 0755, frf )
  end
 
- def runImport
+ def run
    Dir.chdir( @pwd )
+   File.chmod( 0755, Runfile )
    com = sprintf( "./%s", Runfile )
    system( com )
  end
 
  def setMapfile
    newList = Array.new
-   Dir.glob(DelTempBase).each{|name|
-      ml = Array.new
-      pl = Array.new
-      mapfile = name + "/mapfile"
-      fr = open( mapfile, "r" )
-      fr.each {|line|
-         if ((line.chomp).strip).size != 0
+   Dir.glob(TempBaseAll).each{|name|
+     ml = Array.new
+     pl = Array.new
+     mapfile = name + "/mapfile"
+     fr = open( mapfile, "r" )
+     fr.each {|line|
+       if ((line.chomp).strip).size != 0
          ml << (line.chomp).strip
-         end
-      }
-      fr.close
-      p = name + "/impfile"
-      fr = open( p, "r" )
-      fr.each {|line|
-         if ((line.chomp).strip).size != 0
+       end
+     }
+     fr.close
+     p = name + "/impfile"
+     fr = open( p, "r" )
+     fr.each {|line|
+       if ((line.chomp).strip).size != 0
          pl << (line.chomp).strip
-         end
-      }
-      fr.close
-      if ml.size != pl.size
-        puts "Error: " + name
-        exit(0)
-      end
-      for i in 0..ml.size-1
-         mll = (ml[i].chomp).split(" ")
-         pll = (pl[i].chomp).split(" ")
-         newList << sprintf("%s %s", pll[1], mll[1] )
-      end
-      FileUtils.rm_rf( name )
+       end
+     }
+     fr.close
+     if ml.size != pl.size
+       puts "Error: " + name
+       exit(0)
+     end
+     for i in 0..ml.size-1
+       mll = (ml[i].chomp).split(" ")
+       pll = (pl[i].chomp).split(" ")
+       newList << sprintf("%s %s", pll[1], mll[1] )
+     end
    }
    @gSpace.setHandleID( newList )
  end

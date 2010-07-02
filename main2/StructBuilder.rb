@@ -4,6 +4,8 @@ require 'fileutils'
 require 'rexml/document'
 include REXML
 
+require 'main2/DSpace'
+
 class StructBuilder
 
  EXC = "Metadata_Draft"
@@ -11,13 +13,12 @@ class StructBuilder
  IN_filename  = "ist%05d.xml"
  OUT_filename = "ost%05d.xml"
 
- SBCommand = "/opt/dspace/bin/structure-builder"
- EMail = "kouno@stelab.nagoya-u.ac.jp"
-
  def initialize( pwd, workDir, gSpace )
   @pwd = pwd
   @workDir = workDir
   @gSpace = gSpace
+
+  @ds = DSpace.new( @pwd )
 
   readStruct()
   setStruct()
@@ -85,7 +86,7 @@ class StructBuilder
 
  end
 
- def import
+ def build
 
   for i in 0..@newList.size-1
     la = @newList[i].split("/")
@@ -127,7 +128,8 @@ class StructBuilder
        ha = "null"
     end
 
-    dsimport( fni, fno, ha, type )
+    cstr = @ds.getStructureBuilderCommand( fni, fno, ha, type )
+    system( cstr )
     nameList = Array.new
     handleList = Array.new
     readLog( fno, nameList, handleList )
@@ -137,14 +139,6 @@ class StructBuilder
   end
 
  end
-
- def dsimport( fni, fno, handle, type )
-   com =
-   sprintf("%s -f %s -o %s -h %s -t %s -e %s",
-            SBCommand, fni, fno, handle, type, EMail )
-   system( com )
- end
-
 
  def readLog( fno, nameList, handleList )
    fr = open( fno, "r" )

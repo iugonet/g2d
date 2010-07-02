@@ -3,27 +3,21 @@ require 'fileutils'
 require 'tempfile'
 
 require 'main2/Spase2DSpace'
+require 'main2/DSpace'
+require 'main2/ScriptMaker'
 
 class ItemReplace
 
  EXC = "Metadata_Draft"
-
- TempBase = "ImportData_"
-
- Command = "/opt/dspace/bin/import"
- EMail = "kouno@stelab.nagoya-u.ac.jp"
-
- MapFormat = "dspace_mapfile_%05d"
-
- DelTempBase = "ReplaceData_*"
- DelMapFormat = "dspace_mapfile_*"
-
+ TempBase = "ReplaceData_"
  Runfile = "runReplace.sh"
 
  def initialize( pwd, workDir, gSpace )
    @pwd = pwd
    @workDir = workDir
    @gSpace = gSpace
+
+   @ds = DSpace.new( @pwd )
 
    @stList = @gSpace.readStruct()
 
@@ -40,14 +34,13 @@ class ItemReplace
    @replaceList = replaceList
  end
 
- def makeReplace()
+ def make()
+   frf = @pwd + "/" + Runfile
+   sm = ScriptMaker.new( frf )
+
    s2d = Spase2DSpace.new( @pwd )
    s2d.checkLength
    s2d.getQueryList
-   frf = @pwd + "/" + Runfile
-   fw = open( frf, "w" )
-   fw.puts "#!/bin/bash"
-   fw.puts ""
 
    ii = 0
    while ( @replaceList.size > 0 )
@@ -110,19 +103,18 @@ class ItemReplace
      sdir = tdir
 
      mapfile = tdir + "/mapfile"
-     fw.printf("%s -r -e %s -c %s -s %s -m %s\n",
-                Command, EMail, ha, sdir, mapfile )
+     cstr = @ds.getReplaceCommand( ha, sdir, mapfile )
+     sm.puts( cstr )
      ii = ii + 1
    end
 
-   fw.close
+   sm.finalize
    Dir.chdir( @pwd )
-   File.chmod( 0755, frf )
-
  end
 
- def runReplace
+ def run
    Dir.chdir( @pwd )
+   File.chmod( 0755, Runfile )
    com = sprintf( "./%s", Runfile )
    system( com )
  end

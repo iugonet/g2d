@@ -3,40 +3,34 @@ require 'fileutils'
 require 'tempfile'
 
 require 'main2/Spase2DSpace'
-
+require 'main2/DSpace'
+require 'main2/ScriptMaker'
 
 class ItemDelete
 
  EXC = "Metadata_Draft"
- TempBase = "ImportData_"
-
- Command = "/opt/dspace/bin/import"
- EMail = "kouno@stelab.nagoya-u.ac.jp"
-
- MapFormat = "dspace_mapfile_%05d"
- DelTempBase = "ImportData_*"
- DelMapFormat = "dspace_mapfile_*"
-
+ TempDir = "DeleteData"
  Runfile = "runDelete.sh"
 
  def initialize( pwd, workDir, gSpace )
   @pwd = pwd
   @workDir = workDir
   @gSpace = gSpace
+
+  @ds = DSpace.new( @pwd )
  end
 
  def setFileList( deleteList )
    @deleteList = deleteList
  end
  
- def makeDelete()
-
+ def make()
    frf = @pwd + "/" + Runfile
-   fw = open( frf, "w" )
-   fw.puts "#!/bin/bash"
-   fw.puts ""
+   sm = ScriptMaker.new( frf )
 
-   mapfile = @pwd + "/delete_mapfile"
+   tdir = @pwd + "/" + TempDir
+   Dir.mkdir( tdir )
+   mapfile = tdir + "/mapfile"
    fm = open( mapfile, "w" )
    rdir = @pwd + "/" + @workDir + "/" + EXC
    len = rdir.length
@@ -49,18 +43,22 @@ class ItemDelete
    fm.close
 
    if @deleteList.size > 0
-     fw.printf( "%s -d -e %s -m %s\n",
-                Command, EMail, mapfile )
+     cstr = @ds.getDeleteCommand( mapfile )
+     sm.puts( cstr )
    end
-   fw.close
+
+   sm.finalize
    Dir.chdir( @pwd )
-   File.chmod( 0755, frf )
  end
 
- def runDelete()
-    Dir.chdir( @pwd )
-    com = sprintf( "./%s", Runfile )
-    system( com )
+ def run()
+   Dir.chdir( @pwd )
+   File.chmod( 0755, Runfile )
+   com = sprintf( "./%s", Runfile )
+   system( com )
+ end
+
+ def updateMapfile()
  end
 
 end
