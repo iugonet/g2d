@@ -4,7 +4,7 @@ require 'tempfile'
 
 require 'main2/Spase2DSpace'
 require 'main2/DSpace'
-require 'main2/ScriptMaker'
+require 'util/ScriptMaker'
 
 
 class ItemImport

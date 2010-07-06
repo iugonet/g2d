@@ -1,15 +1,14 @@
 # -*- coding : utf-8 -*-
 
 require 'fileutils'
+require 'main1/Git'
 
 class GitDSpace
 
  Git_conf = "conf/gitdspace.conf"
  Commit_log          = "Commit.log"
- ItemHandle_log      = "ItemHandle.log"
  StructureHandle_log = "StructureHandle.log"
-
- GitCommand = "git"
+ ItemHandle_log      = "ItemHandle.log"
 
  GitDirectory = "GitDSpace"
 
@@ -17,10 +16,9 @@ class GitDSpace
    @pwd = pwd
    @repoList = repoList
 
-   @gitCommand = GitCommand
-
    makeGitDir()
    readConf()
+   @git = Git.new( @user, @host )
  end
 
  def makeGitDir()
@@ -60,22 +58,15 @@ class GitDSpace
    fr.close
  end
 
- def setCommandPath( gitCommand )
-   @gitCommand = gitCommand
- end
-
  def gitPull
    Dir.chdir( @gwd )
    dir = File.basename( @repoPath, ".git" )
    @repoDir = @gwd+"/"+dir
    if FileTest.exist?( @repoDir )
       Dir.chdir( @repoDir )
-      com = sprintf( "%s pull", @gitCommand )
-      system( com )
+      system( @git.getPullCommand() )
    else
-      com = sprintf( "%s clone ssh://%s@%s/~/git/%s\n",
-                    @gitCommand, @user, @host, @repoPath )
-      system( com )
+      system( @git.getCloneCommand( @repoPath ) )
    end
  end
 
@@ -113,9 +104,7 @@ class GitDSpace
  end
 
  def gitPush( message )
-   com1 = sprintf( "%s add .", @gitCommand )
-   com2 = sprintf( "%s commit -am \"%s\"", @gitCommand, message )
-   com3 = sprintf( "%s push", @gitCommand )
+   com1, com2, com3 = @git.getPushCommand( message )
    Dir.chdir( @repoDir )
    system( com1 )
    system( com2 )
@@ -124,22 +113,12 @@ class GitDSpace
  end
 
  def readStruct()
-   stList = Array.new
-   fr = open( @structureHandleFile, "r" )
-   fr.each { |line|
-     stList << (line.chomp).strip
-   }
-   fr.close
+   stList = getLineList( @structureHandleFile )
    return stList
  end
 
  def writeStruct( list )
-   stList = Array.new
-   fr = open( @structureHandleFile, "r" )
-   fr.each { |line|
-     stList << (line.chomp).strip
-   }
-   fr.close
+   stList = getLineList( @structureHandleFile )
    wList = stList + list
    wList.uniq!
    fw = open( @structureHandleFile, "w" )
@@ -151,12 +130,7 @@ class GitDSpace
  end
 
  def checkStruct()
-   stList = Array.new
-   fr = open( @structureHandleFile, "r" )
-   fr.each { |line|
-     stList << (line.chomp).strip
-   }
-   fr.close
+   stList = getLineList( @structureHandleFile )
    for i in 0..stList.size-2
         il = stList[i].split(" ")
      for j in i+1..stList.size-1
@@ -184,19 +158,13 @@ class GitDSpace
    return el
  end
  def setCommitID( i, id )
-   cf = @commitFileList[i]
-   fw = open( cf, "w" )
+   fw = open( @commitFileList[i], "w" )
    fw.puts id
    fw.close
  end
 
  def deleteHandleID2( file, id )
-   hList = Array.new
-   fr = open( @itemHandleFile, "r" )
-   fr.each { |line|
-      hList << (line.chomp).strip
-   }
-   fr.close
+   hList = getLineList( @itemHandleFile )
    ii = -1
    for i in 0..hList.size-1
      il = hList[i].split(" ")
@@ -220,12 +188,7 @@ class GitDSpace
  end
 
  def deleteHandleID( file )
-   hList = Aarray.new
-   fr = open( @itemHandleFile, "r" )
-   fr.each { |line|
-     hList << (line.chomp).strip
-   }
-   fr.close
+   hList = getLineList( @itemHandleFile )
    ii = -1
    for i in 0..hList.size-1
      il = hList[i].split(" ")
@@ -249,13 +212,7 @@ class GitDSpace
  end
 
  def getHandleID( file )
-   hList = Array.new
-   fr = open( @itemHandleFile, "r" )
-   fr.each { |line|
-      hList << (line.chomp).strip
-      puts line
-   }
-   fr.close
+   hList = getLineList( @itemHandleFile )
    for i in 0..hList.size-1
      il = hList[i].split(" ")
      puts il[0] + " : " + file
@@ -267,12 +224,7 @@ class GitDSpace
  end
 
  def setHandleID( list )
-  hList = Array.new
-  fr = open( @itemHandleFile, "r" )
-  fr.each { |line|
-    hList << (line.chomp).strip
-  }
-  fr.close
+  hList = getLineList( @itemHandleFile )
   wList = hList + list
   wList.uniq!
   fw = open( @itemHandleFile, "w" )
@@ -284,12 +236,7 @@ class GitDSpace
  end
 
  def checkItemHandle()
-   hList = Array.new
-   fr = open( @itemHandleFile, "r" )
-   fr.each { |line|
-     hList << (line.chomp).strip
-   }
-   fr.close
+   hList = getLineList( @itemHandleFile )
    for i in 0..hList.size-2
       il = hList[i].split(" ")
      for j in i+1..hList.size-1
@@ -302,6 +249,16 @@ class GitDSpace
        end
      end
    end
+ end
+
+ def getLineList( filename )
+   lineList = Array.new
+   fr = open( filename, "r" )
+   fr.each { |line|
+     lineList << (line.chomp).strip
+   }
+   fr.close
+   return lineList
  end
 
 end

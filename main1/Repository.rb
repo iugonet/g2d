@@ -2,19 +2,20 @@
 require 'fileutils'
 require 'tempfile'
 
+require 'main1/Git'
+require 'util/ScriptMaker'
+
 class Repository
 
  Commit_log = "Commit.log"
  Change_log = "change.log"
 
- GitCommand = "git"
  WorkDirectory = "WorkDir"
 
  def initialize( pwd, repoList )
    @pwd = pwd
    @repoList = repoList
 
-   @gitCommand = GitCommand
    makeWorkDir()
 
    @repoWorkDirList = Array.new
@@ -35,6 +36,10 @@ class Repository
    FileUtils.mkdir_p( @repoWorkDirList.uniq )
  end
 
+ def initGit( host, user )
+   @git = Git.new( user, host )
+ end
+
  def makeWorkDir
    wd = @pwd + "/" + WorkDirectory
    if FileTest.exist?(wd)
@@ -51,29 +56,21 @@ class Repository
    @wd = wd
  end
 
- def setCommandPath( gitCommand )
-   @gitCommand = gitCommand
- end
-
- def gitPull( host, user )
+ def gitPull()
    Dir.chdir( @wd )
    gitsh = @wd + "/" + "git.sh"
-   fw = open( gitsh, "w" )
-   fw.puts "#!/bin/bash"
-   fw.puts ""
+   sc = ScriptMaker.new( gitsh )
    for i in 0..@repoWorkDirList.size-1
      if FileTest.exist?( @repo[i] )
-       fw.printf( "cd %s\n", @repo[i] )
-       fw.printf( "%s pull\n", @gitCommand )
+       sc.puts( sprintf("cd %s", @repo[i] ) )
+       sc.puts( @git.getPullCommand() )
      else
-       fw.printf( "cd %s\n", @repoWorkDirList[i] )
-       fw.printf( "%s clone ssh://%s@%s/~/git/%s\n",
-                  @gitCommand, user, host, @repoList[i] )
+       sc.puts( sprintf( "cd %s\n", @repoWorkDirList[i] ) )
+       sc.puts( @git.getCloneCommand( @repoList[i] ) )
      end
    end
-   fw.close
+   sc.finalize
    File.chmod( 0755, gitsh )
-
    system( gitsh )
    Dir.chdir( @pwd )
  end
@@ -87,8 +84,7 @@ class Repository
      b = File.basename( @repoList[i], ".git" )
      filename = @wd + "/" + r + "_" + b + "_" + Commit_log
      @commitFileList << filename
-     gcom = sprintf( "%s log | grep commit > %s",
-                     @gitCommand, filename )
+     gcom = @git.getLogCommand( filename )
      system( gcom )
      Dir.chdir( @pwd )
    end
@@ -132,10 +128,8 @@ class Repository
 
        lt = commitLineList[j].split(" ")
        id = lt[1].strip
-       gcom = sprintf( "%s show --pretty=oneline -p %s > %s",
-                        @gitCommand, id, tempfile )
+       gcom = @git.getShowCommand( id, tempfile )
        system( gcom )
-
        tempf.open
        skip = true
        ld = Array.new

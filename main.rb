@@ -10,8 +10,6 @@ require 'main2/ItemImport'
 require 'main2/ItemReplace'
 require 'main2/ItemDelete'
 
-GitCommand = "git"
-
 pwd = Dir.pwd
 conf = Config.new( pwd )
 # read conf. get host and user name.
@@ -23,13 +21,12 @@ puts conf.getRepoList
 # end read repository path.
 
 gSpace = GitDSpace.new( pwd, conf.getRepoList )
-gSpace.setCommandPath( GitCommand )
 gSpace.gitPull
 gSpace.init
 
 repo = Repository.new( pwd, conf.getRepoList )
-repo.setCommandPath( GitCommand )
-repo.gitPull( conf.getHost, conf.getUser )
+repo.initGit( conf.getHost, conf.getUser )
+repo.gitPull
 repo.gitCommitLog
 repo.setGitDSpace( gSpace )
 repo.getChangeList
