@@ -30,7 +30,7 @@ class Git
  end
 
  def getLogCommand( filename )
-   str = sprintf( "%s log | grep commit > %s",
+   str = sprintf( "%s log | grep commit | grep -v \" commit\" > %s",
                   GitCommand, filename )
    return str
  end
