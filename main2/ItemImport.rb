@@ -91,8 +91,9 @@ class ItemImport
 
         p = tdir+"/impfile"
         fg = open( p, "a" )
-        list[i].slice!(0,len+1)
-        fg.printf( "%d %s\n", i, list[i] )
+        llen = list[i].size
+        fgl = list[i].slice(len+1,llen-1)
+        fg.printf( "%d %s\n", i, fgl )
         fg.close
      end
 

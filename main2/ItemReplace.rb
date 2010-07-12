@@ -86,13 +86,9 @@ class ItemReplace
 
         s2d.conv( list[i], mdir )
 
-        p = tdir+"/rpfile"
-        fg = open( p, "a" )
-        fg.printf("%d %s\n", i, list[i] )
-        fg.close
-
-        list[i].slice!(0,len+1)
-        id = @gSpace.getHandleID( list[i] )
+        llen = list[i].size
+        fgl = list[i].slice(len+1,llen-1)
+        id = @gSpace.getHandleID( fgl )
         puts "id : " + id.to_s
         fim = tdir + "/mapfile"
         fg = open( fim, "a" )

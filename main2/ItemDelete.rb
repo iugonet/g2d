@@ -35,10 +35,11 @@ class ItemDelete
    rdir = @pwd + "/" + @workDir + "/" + EXC
    len = rdir.length
    for i in 0..@deleteList.size-1
-     @deleteList[i].slice!(0,len+1)
-     id = @gSpace.getHandleID( @deleteList[i] )
+     llen = @deleteList[i].size
+     fgl = @deleteList[i].slice(len+1,llen-1)
+     id = @gSpace.getHandleID( fgl )
      fm.printf("%d %s\n", i+1, id )
-     @gSpace.deleteHandleID2( @deleteList[i], id )
+     @gSpace.deleteHandleID2( fgl, id )
    end
    fm.close
 
