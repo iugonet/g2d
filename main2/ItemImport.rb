@@ -52,15 +52,15 @@ class ItemImport
      Dir.mkdir( tdir )
 
 
+     file = @addList[0]
+     dir = File.dirname( file )
+     hdir = File.dirname( file )
 
      rdir = @pwd + "/" + @workDir + "/" + EXC
      len = rdir.length
      hdir.slice!(0,len+1)
      ha = @stHash[hdir]
 
-     file = @addList[0]
-     dir = File.dirname( file )
-     hdir = File.dirname( file )
      list  = Array.new
      dlist = Array.new
      list << file

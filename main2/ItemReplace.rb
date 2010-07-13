@@ -60,7 +60,7 @@ class ItemReplace
 
      list = Array.new
      dlist = Array.new
-     list << @replaceList[0]
+     list << file
      @replaceList.delete_at(0)
      for i in 0..@replaceList.size-1
         f = @replaceList[i]
