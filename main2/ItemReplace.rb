@@ -70,8 +70,9 @@ class ItemReplace
            dlist << i
         end
      end
-     for i in dlist.size-1..0
-        @replaceList.delete_at( i )
+     for i in 0..dlist.size-1
+        j = dlist.size-1-i
+        @replaceList.delete_at( dlist[j] )
      end
 
      for i in 0..list.size-1
