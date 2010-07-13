@@ -52,18 +52,18 @@ class ItemImport
      Dir.mkdir( tdir )
 
 
-     file = @addList[0]
-     dir = File.dirname( file )
-     hdir = File.dirname( file )
 
      rdir = @pwd + "/" + @workDir + "/" + EXC
      len = rdir.length
      hdir.slice!(0,len+1)
      ha = @stHash[hdir]
 
+     file = @addList[0]
+     dir = File.dirname( file )
+     hdir = File.dirname( file )
      list  = Array.new
      dlist = Array.new
-     list << @addList[0]
+     list << file
      @addList.delete_at(0)
      for i in 0..@addList.size-1
         f = @addList[i]
@@ -73,9 +73,8 @@ class ItemImport
          dlist << i
         end
      end
-     for i in 0..dlist.size-1
-        j = dlist.size-1 - i
-        @addList.delete_at( j )
+     for i in dlist.size-1..0
+        @addList.delete_at( i )
      end
 
      for i in 0..list.size-1
