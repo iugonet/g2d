@@ -35,7 +35,13 @@ class ItemImport
  def setFileList( addList )
    @addList = addList
  end
- 
+ def setRepoDirList( repoDirList )
+   @repoDirList = repoDirList
+ end
+ def setTopList( topList )
+   @topList = topList
+ end
+
  def make()
    frf = @pwd + "/" + Runfile
    sm = ScriptMaker.new( frf )
@@ -56,9 +62,21 @@ class ItemImport
      dir = File.dirname( file )
      hdir = File.dirname( file )
 
-     rdir = @pwd + "/" + @workDir + "/" + EXC
-     len = rdir.length
-     hdir.slice!(0,len+1)
+     topd = ""
+     for j in 0..@repoDirList.size-1
+       r = File.dirname(@repoDirList[j])
+       rd = r.gsub(/[\/]/,'_')
+       rdir = @pwd + "/" + @workDir + "/" + rd + "/" + File.basename(@repoDirList[j],".git")
+       if hdir.include?( rdir )
+          hdir.slice!(0,rdir.length+1)
+         if @topList[j] != nil &&
+            @topList[j] != ""
+           hdir = @topList[j] + "/" + hdir
+           topd = @topList[j]
+           break
+         end
+       end
+     end
      ha = @stHash[hdir]
 
      list  = Array.new
@@ -93,7 +111,11 @@ class ItemImport
         p = tdir+"/impfile"
         fg = open( p, "a" )
         llen = list[i].size
-        fgl = list[i].slice(len+1,llen-1)
+        if topd != ""
+        fgl = topd + "/" + list[i].slice(rdir.length+1,llen-1)
+        else
+        fgl = list[i].slice(rdir.length+1,llen-1)
+        end
         fg.printf( "%d %s\n", i, fgl )
         fg.close
      end

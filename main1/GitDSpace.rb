@@ -5,8 +5,8 @@ require 'main1/Git'
 
 class GitDSpace
 
- Git_conf = "conf/gitdspace.conf"
- Commit_log          = "Commit.log"
+ Git_conf            = "conf/gitdspace.conf"
+ Commit_log          = "_Commit.log"
  StructureHandle_log = "StructureHandle.log"
  ItemHandle_log      = "ItemHandle.log"
 
@@ -25,7 +25,7 @@ class GitDSpace
    gd = @pwd + "/" + GitDirectory
    if FileTest.exist?(gd)
      if FileTest.directory?(gd)
-        puts "git dir: " + gd
+       puts "git dir: " + gd
      else
        puts "Error: " + gd + "file exists"
        exit
@@ -59,28 +59,25 @@ class GitDSpace
  end
 
  def gitPull
-   Dir.chdir( @gwd )
    dir = File.basename( @repoPath, ".git" )
    @repoDir = @gwd+"/"+dir
    if FileTest.exist?( @repoDir )
-      Dir.chdir( @repoDir )
-      system( @git.getPullCommand() )
+     Dir.chdir( @repoDir )
+     system( @git.getPullCommand() )
    else
-      system( @git.getCloneCommand( @repoPath ) )
+     Dir.chdir( @gwd )
+     system( @git.getCloneCommand( @repoPath ) )
    end
+   Dir.chdir( @pwd )
  end
 
  def init
-   Dir.chdir( @gwd )
-
    @commitFileList = Array.new
    for i in 0..@repoList.size-1
-     d = File.dirname( @repoList[i] )
-     r = d.gsub(/[\/]/,'_')
-     b = File.basename( @repoList[i], ".git" )
-     cf = @repoDir + "/" + r + "_" + b + "_" + Commit_log
+     f = @repoList[i].gsub(/[\/]/,'_')
+     b = File.basename( f, ".git" )
+     cf = @repoDir + "/" + b + Commit_log
      if !FileTest.exist?( cf )
-       puts "init file: " + cf
        fr = open( cf, "w" )
        fr.close
      end
@@ -89,18 +86,15 @@ class GitDSpace
    hf = @repoDir + "/" + ItemHandle_log
    sf = @repoDir + "/" + StructureHandle_log
    if !FileTest.exist?( hf )
-     puts "init file: " + hf
      fr = open( hf, "w" )
      fr.close
    end
    if !FileTest.exist?( sf )
-     puts "init file: " + sf
      fr = open( sf, "w" )
      fr.close
    end
    @itemHandleFile = hf
    @structureHandleFile = sf
-   Dir.chdir( @pwd )
  end
 
  def gitPush( message )
@@ -245,7 +239,7 @@ class GitDSpace
           puts "Error: item handle."
           puts il[0] + " : " + jl[0]
           puts il[1] + " : " + jl[1]
-          exit(0)
+          exit
        end
      end
    end

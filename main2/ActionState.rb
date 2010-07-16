@@ -4,7 +4,7 @@ require 'fileutils'
 
 class ActionState
 
- Change_log = "change.log"
+ Change_log = "Change.log"
 
 
  def initialize( pwd )

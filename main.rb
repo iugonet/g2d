@@ -12,13 +12,6 @@ require 'main2/ItemDelete'
 
 pwd = Dir.pwd
 conf = Config.new( pwd )
-# read conf. get host and user name.
-puts "Host: " + conf.getHost
-puts "User: " + conf.getUser
-# end conf. get host and user name.
-# read repository path.
-puts conf.getRepoList
-# end read repository path.
 
 gSpace = GitDSpace.new( pwd, conf.getRepoList )
 gSpace.gitPull
@@ -36,11 +29,15 @@ aState.sift
 aState.test
 
 structure = StructBuilder.new( pwd, repo.getWorkDir, gSpace )
+structure.setRepoDirList( conf.getRepoDirList )
+structure.setTopList( conf.getTopList )
 structure.setFileList( aState.getAddList )
 structure.build
 
 item_import = ItemImport.new( pwd, repo.getWorkDir, gSpace )
 item_import.setFileList( aState.getAddList )
+item_import.setRepoDirList( conf.getRepoDirList )
+item_import.setTopList( conf.getTopList )
 item_import.make
 item_import.run
 item_import.setMapfile

@@ -6,6 +6,7 @@ class Config
 
  def initialize( pwd )
   @pwd = pwd
+
   fr = open( Serv_conf, "r" )
   fr.each { |line|
     lt = (line.chomp).split(/=/)
@@ -18,15 +19,23 @@ class Config
   fr.close
 
   @repoList = Array.new
+  @topList  = Array.new
   fr = open( Repo_conf, "r" )
   fr.each { |line|
-    if line.strip != ""
-      if !line.include?("#")
-        @repoList << (line.chomp).strip
-      end
+    if  line.strip != "" &&
+       !line.include?("#")
+      lt = (line.chomp).split(/ /)
+        @repoList << (lt[0]).strip
+        @topList << (lt[1]).strip
     end
   }
   fr.close
+
+  @repoDirList = Array.new
+  for i in 0..@repoList.size-1
+     str = File.dirname(@repoList[i]) + "/" + File.basename(@repoList[i],".git")
+     @repoDirList << str
+  end
 
  end
 
@@ -40,6 +49,13 @@ class Config
 
  def getRepoList
    return @repoList
+ end
+ def getTopList
+   return @topList
+ end
+
+ def getRepoDirList
+   return @repoDirList
  end
 
 end

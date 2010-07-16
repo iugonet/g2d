@@ -8,8 +8,6 @@ require 'main2/DSpace'
 
 class StructBuilder
 
- EXC = "Metadata_Draft"
-
  IN_filename  = "ist%05d.xml"
  OUT_filename = "ost%05d.xml"
 
@@ -44,29 +42,50 @@ class StructBuilder
   @stDirList = Array.new
   @stHandleList = Array.new
   for i in 0..@stList.size-1
-     la = @stList[i].split(" ")
-     if la.length == 2
-       @stDirList << la[0].strip
-       @stHandleList << la[1].strip
-     else
-       puts "Error"
-       exit
-     end
+    la = @stList[i].split(" ")
+    if la.length == 2
+      @stDirList << la[0].strip
+      @stHandleList << la[1].strip
+    else
+      puts "Error"
+      exit
+    end
   end
+ end
+
+ def setRepoDirList( repoDirList )
+   @repoDirList = repoDirList
+ end
+ def setTopList( topList )
+   @topList = topList
  end
 
  def setFileList( addList )
    @addList = addList
    @dirList = Array.new
 
-   rdir = @pwd + "/" + @workDir + "/" + EXC
-   rlen = rdir.length
-   for i in 0..@addList.size-1
-      dir = File.dirname( @addList[i] )
-      dir.slice!(0,rlen+1)
-      @dirList << dir
-   end
 
+   for i in 0..@addList.size-1
+     dir = File.dirname( @addList[i] )
+
+     for j in 0..@repoDirList.size-1
+       r = File.dirname(@repoDirList[j])
+       rd = r.gsub(/[\/]/,'_')
+       rdir = @pwd + "/" + @workDir + "/" + rd + "/" + File.basename( @repoDirList[j], ".git" )
+       puts "rd,rdir= " + rd + " : " + rdir
+       if dir.include?( rdir )
+         dir.slice!(0,rdir.length+1)
+         puts "dir: " + dir
+         if @topList[j] != nil &&
+            @topList[j] != ""
+           dir = @topList[j] + "/" + dir
+           break
+         end
+       end
+     end
+     puts "ddir: " + dir
+     @dirList << dir
+   end
    @dirList.uniq!
    @dirList.sort!
 

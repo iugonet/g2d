@@ -8,8 +8,6 @@ class Git
    @user = user
    @host = host
  end
- 
-
 
  def getPullCommand()
    str = sprintf( "%s pull", GitCommand )
@@ -30,7 +28,7 @@ class Git
  end
 
  def getLogCommand( filename )
-   str = sprintf( "%s log | grep commit | grep -v \" commit\" > %s",
+   str = sprintf( "%s log | grep \"commit \" | grep -v \" commit\" > %s",
                   GitCommand, filename )
    return str
  end

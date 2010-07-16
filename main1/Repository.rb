@@ -7,8 +7,8 @@ require 'util/ScriptMaker'
 
 class Repository
 
- Commit_log = "Commit.log"
- Change_log = "change.log"
+ Commit_log = "_Commit.log"
+ Change_log = "Change.log"
 
  WorkDirectory = "WorkDir"
 
@@ -20,11 +20,8 @@ class Repository
 
    @repoWorkDirList = Array.new
    for i in 0..repoList.size-1
-    d = repoList[i].split(/\//)
-    str = @wd + "/" + d[0]
-    for j in 1..d.size-2
-      str = str + "_" + d[j]
-    end
+    d = File.dirname( @repoList[i] )
+    str = @wd + "/" + d.gsub(/[\/]/,'_')
     @repoWorkDirList << str
    end
 
@@ -65,7 +62,7 @@ class Repository
        sc.puts( sprintf("cd %s", @repo[i] ) )
        sc.puts( @git.getPullCommand() )
      else
-       sc.puts( sprintf( "cd %s\n", @repoWorkDirList[i] ) )
+       sc.puts( sprintf( "cd %s", @repoWorkDirList[i] ) )
        sc.puts( @git.getCloneCommand( @repoList[i] ) )
      end
    end
@@ -79,15 +76,14 @@ class Repository
    @commitFileList = Array.new
    for i in 0..@repo.size-1
      Dir.chdir( @repo[i] )
-     d = File.dirname( @repoList[i] )
-     r = d.gsub(/[\/]/,'_')
-     b = File.basename( @repoList[i], ".git" )
-     filename = @wd + "/" + r + "_" + b + "_" + Commit_log
+     f = @repoList[i].gsub(/[\/]/,'_')
+     b = File.basename( f, ".git" )
+     filename = @wd + "/" + b + Commit_log
      @commitFileList << filename
      gcom = @git.getLogCommand( filename )
      system( gcom )
-     Dir.chdir( @pwd )
    end
+   Dir.chdir( @pwd )
  end
 
  def setGitDSpace( gSpace )
@@ -99,11 +95,8 @@ class Repository
  end
 
  def getChangeList
-
   for i in 0..@commitFileList.size-1
-
     now_id = @gSpace.getCommitID( i )
-
     Dir.chdir( @repo[i] )
     commitLineList = Array.new
     fr = open( @commitFileList[i], "r" )
