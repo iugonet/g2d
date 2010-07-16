@@ -26,7 +26,11 @@ class Config
        !line.include?("#")
       lt = (line.chomp).split(/ /)
         @repoList << (lt[0]).strip
-        @topList << (lt[1]).strip
+        if lt[1] != nil
+          @topList  << (lt[1]).strip
+        else
+          @topList  << nil
+        end
     end
   }
   fr.close

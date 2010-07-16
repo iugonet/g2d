@@ -72,10 +72,8 @@ class StructBuilder
        r = File.dirname(@repoDirList[j])
        rd = r.gsub(/[\/]/,'_')
        rdir = @pwd + "/" + @workDir + "/" + rd + "/" + File.basename( @repoDirList[j], ".git" )
-       puts "rd,rdir= " + rd + " : " + rdir
        if dir.include?( rdir )
          dir.slice!(0,rdir.length+1)
-         puts "dir: " + dir
          if @topList[j] != nil &&
             @topList[j] != ""
            dir = @topList[j] + "/" + dir
@@ -83,7 +81,6 @@ class StructBuilder
          end
        end
      end
-     puts "ddir: " + dir
      @dirList << dir
    end
    @dirList.uniq!
