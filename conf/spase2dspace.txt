@@ -2,7 +2,9 @@ Catalog
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ AccessInformation AccessURL URL
+$ AccessInformation Acknowledgement
 $ TimeSpan StartDate
 $ TimeSpan StopDate
 $ TimeSpan RelativeStopDate
@@ -10,7 +12,9 @@ DisplayData
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ AccessInformation AccessURL URL
+$ AccessInformation Acknowledgement
 $ TemporalDescription TimeSpan StartDate
 $ TemporalDescription TimeSpan StopDate
 $ TemporalDescription TimeSpan RelativeStopDate
@@ -18,6 +22,7 @@ NumericalData
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ ResourceHeader AlternateName
 $ ResourceHeader ReleaseDate
 $ ResourceHeader ExpirationDate
@@ -30,6 +35,7 @@ $ AccessInformation AccessURL URL
 $ AccessInformation Availability
 $ AccessInformation AccessRights
 $ AccessInformation Format
+$ AccessInformation Acknowledgement
 $ ProcessingLevel
 $ InstrumentID
 $ MeasurementType
@@ -55,6 +61,7 @@ Instrument
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ ResourceHeader ReleaseDate
 $ ResourceHeader ExpirationDate
 $ ResourceHeader Contact PersonID
@@ -66,6 +73,7 @@ Observatory
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ ResourceHeader ReleaseDate
 $ ResourceHeader ExpirationDate
 $ ResourceHeader Contact PersonID
@@ -85,26 +93,32 @@ Repository
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ AccessURL URL
 Document
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ AccessInformation AccessURL URL
+$ AccessInformation Acknowledgement
 Registry
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ AccessURL URL
 Service
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ AccessURL URL
 Annotation
 $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
+$ ResourceHeader Acknowledgement
 $ TimeSpan StartDate
 $ TimeSpan StopDate
 $ TimeSpan RelativeStopDate

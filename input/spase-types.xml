@@ -615,7 +615,19 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Catalog</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Catalog</element>
     <qualifier>AccessInformationAccessURLURL</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Catalog</element>
+    <qualifier>AccessInformationAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -680,7 +692,19 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>DisplayData</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>DisplayData</element>
     <qualifier>AccessInformationAccessURLURL</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>DisplayData</element>
+    <qualifier>AccessInformationAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -740,6 +764,12 @@
     <schema>iugonet</schema>
     <element>NumericalData</element>
     <qualifier>ResourceHeaderDescription</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>NumericalData</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -830,6 +860,12 @@
     <schema>iugonet</schema>
     <element>NumericalData</element>
     <qualifier>AccessInformationFormat</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>NumericalData</element>
+    <qualifier>AccessInformationAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1020,6 +1056,12 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Instrument</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Instrument</element>
     <qualifier>ResourceHeaderReleaseDate</qualifier>
   </dc-type>
 
@@ -1080,6 +1122,12 @@
     <schema>iugonet</schema>
     <element>Observatory</element>
     <qualifier>ResourceHeaderDescription</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Observatory</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1197,6 +1245,12 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Repository</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Repository</element>
     <qualifier>AccessURLURL</qualifier>
   </dc-type>
 
@@ -1221,6 +1275,12 @@
     <schema>iugonet</schema>
     <element>Document</element>
     <qualifier>ResourceHeaderDescription</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Document</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1231,6 +1291,12 @@
 
   <dc-type>
     <schema>iugonet</schema>
+    <element>Document</element>
+    <qualifier>AccessInformationAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
     <element>Registry</element>
   </dc-type>
 
@@ -1250,6 +1316,12 @@
     <schema>iugonet</schema>
     <element>Registry</element>
     <qualifier>ResourceHeaderDescription</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Registry</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1284,6 +1356,12 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Service</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Service</element>
     <qualifier>AccessURLURL</qualifier>
   </dc-type>
 
@@ -1308,6 +1386,12 @@
     <schema>iugonet</schema>
     <element>Annotation</element>
     <qualifier>ResourceHeaderDescription</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Annotation</element>
+    <qualifier>ResourceHeaderAcknowledgement</qualifier>
   </dc-type>
 
   <dc-type>
