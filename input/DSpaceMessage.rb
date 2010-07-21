@@ -10,13 +10,11 @@ class DSpaceType
 # Output
  $qualifierSeparator = ""
 
- $rangeExtension = "RangeSearch"
-
 # Output Schema
  $outSchema = "iugonet"
 
 # output filename
- $outFilename = "itemdisplay.conf"
+ $outFilename = "message.properties"
 
  def initialize
    @elementList = Array.new
@@ -42,19 +40,19 @@ class DSpaceType
          else
             @elementList << qnline[0].strip
             @qualifierList << nil
-            @noteList << qnline[1].strip
+            @noteList << nil
          end
        else
          qline = sline.delete( $elemDelimiter )
          qnline = (qline.strip).split( $noteDelimiter )
          if qnline.length == 1
            @elementList << @elementList[@elementList.size-1]
+           @noteList << qnline[0].strip
            @qualifierList << (qnline[0].strip).tr($qualifierDelimiter,$qualifierSeparator)
-           @noteList << nil
          else
            @elementList << @elementList[@elementList.size-1]
+           @noteList << qnline[0].strip
            @qualifierList << (qnline[0].strip).tr($qualifierDelimiter,$qualifierSeparator)
-           @noteList << qnline[1].strip
          end
        end
      end
@@ -62,37 +60,24 @@ class DSpaceType
    fr.close
  end
 
- def writeValue( fw, schema, element, qualifier )
-   if element.size > 64
-     puts "Error: element.size > 64: " + element
-     exit
-   end
-   if qualifier != nil && qualifier.size > 64
-     puts "Error: qualifier.size > 64: " + qualifier
-     exit
-   end
+ def writeValue( fw, schema, element, qualifier, qualifier1 )
    if qualifier != nil
-     if qualifier.include?("URL")
-       fw.printf("%s.%s.%s(link), \\\n", schema, element, qualifier )
-     else
-       fw.printf("%s.%s.%s, \\\n", schema, element, qualifier )
-     end
+     fw.printf("metadata.%s.%s.%s = %s\n", schema, element, qualifier, qualifier1 )
    else
-     fw.printf("%s.%s, \\\n",    schema, element )
+     fw.printf("metadata.%s.%s = %s\n",    schema, element, element )
    end
  end
 
  def test()
    fw = open( $outFilename, "w" )
-   fw.puts "webui.itemdisplay.default = \\"
-   fw.printf("%s.%s, \\\n", $outSchema, "ResourceType" )
+   fw.printf("metadata.%s.%s = %s\n", $outSchema, "ResourceType", "Resource Type" )
    for i in 0..@elementList.size-1
-      writeValue( fw, $outSchema, @elementList[i], @qualifierList[i] )
+      writeValue( fw, $outSchema, @elementList[i], @qualifierList[i], @noteList[i] )
    end
-   fw.printf("%s.%s\n", $outSchema, "filename" )
+   fw.printf("metadata.%s.%s = %s\n", $outSchema, "filename", "filename" )
    fw.close
 
-   puts "write: itemdisplay.conf"
+   puts "write: message.properties"
  end
 end
 
