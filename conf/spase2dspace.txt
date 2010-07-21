@@ -28,9 +28,6 @@ $ ResourceHeader ReleaseDate
 $ ResourceHeader ExpirationDate
 $ ResourceHeader Contact PersonID
 $ ResourceHeader Contact Role
-$ TemporalDescription TimeSpan StartDate
-$ TemporalDescription TimeSpan StopDate
-$ TemporalDescription TimeSpan RelativeStopDate
 $ AccessInformation AccessURL URL
 $ AccessInformation Availability
 $ AccessInformation AccessRights
@@ -41,6 +38,7 @@ $ InstrumentID
 $ MeasurementType
 $ TemporalDescription TimeSpan StartDate
 $ TemporalDescription TimeSpan StopDate
+$ TemporalDescription TimeSpan RelativeStopDate
 $ ObservedRegion
 $ Parameter Name
 $ Parameter Description
