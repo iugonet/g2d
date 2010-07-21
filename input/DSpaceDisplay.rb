@@ -85,11 +85,11 @@ class DSpaceType
  def test()
    fw = open( $outFilename, "w" )
    fw.puts "webui.itemdisplay.default = \\"
+   fw.printf("%s.%s, \\\n", $outSchema, "ResourceType" )
    for i in 0..@elementList.size-1
       writeValue( fw, $outSchema, @elementList[i], @qualifierList[i] )
    end
-
-   fw.printf("%s.%s\n", $outSchema, "ResourceType" )
+   fw.printf("%s.%s\n", $outSchema, "filename" )
    fw.close
 
    puts "write: itemdisplay.conf"
