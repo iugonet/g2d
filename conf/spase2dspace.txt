@@ -3,6 +3,7 @@ $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
 $ ResourceHeader Acknowledgement
+$ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Acknowledgement
 $ TimeSpan StartDate
@@ -13,6 +14,7 @@ $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
 $ ResourceHeader Acknowledgement
+$ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Acknowledgement
 $ TemporalDescription TimeSpan StartDate
@@ -28,6 +30,7 @@ $ ResourceHeader ReleaseDate
 $ ResourceHeader ExpirationDate
 $ ResourceHeader Contact PersonID
 $ ResourceHeader Contact Role
+$ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Availability
 $ AccessInformation AccessRights
@@ -98,6 +101,7 @@ $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
 $ ResourceHeader Acknowledgement
+$ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Acknowledgement
 Registry

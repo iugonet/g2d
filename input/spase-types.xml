@@ -621,6 +621,12 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Catalog</element>
+    <qualifier>AccessInformationRepositoryID</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Catalog</element>
     <qualifier>AccessInformationAccessURLURL</qualifier>
   </dc-type>
 
@@ -693,6 +699,12 @@
     <schema>iugonet</schema>
     <element>DisplayData</element>
     <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>DisplayData</element>
+    <qualifier>AccessInformationRepositoryID</qualifier>
   </dc-type>
 
   <dc-type>
@@ -805,37 +817,7 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>NumericalData</element>
-    <qualifier>TemporalDescriptionTimeSpanStartDate</qualifier>
-  </dc-type>
-
-  <dc-type>
-    <schema>iugonet</schema>
-    <element>NumericalData</element>
-    <qualifier>TemporalDescriptionTimeSpanStartDateRangeSearch</qualifier>
-  </dc-type>
-
-  <dc-type>
-    <schema>iugonet</schema>
-    <element>NumericalData</element>
-    <qualifier>TemporalDescriptionTimeSpanStopDate</qualifier>
-  </dc-type>
-
-  <dc-type>
-    <schema>iugonet</schema>
-    <element>NumericalData</element>
-    <qualifier>TemporalDescriptionTimeSpanStopDateRangeSearch</qualifier>
-  </dc-type>
-
-  <dc-type>
-    <schema>iugonet</schema>
-    <element>NumericalData</element>
-    <qualifier>TemporalDescriptionTimeSpanRelativeStopDate</qualifier>
-  </dc-type>
-
-  <dc-type>
-    <schema>iugonet</schema>
-    <element>NumericalData</element>
-    <qualifier>TemporalDescriptionTimeSpanRelativeStopDateRangeSearch</qualifier>
+    <qualifier>AccessInformationRepositoryID</qualifier>
   </dc-type>
 
   <dc-type>
@@ -908,6 +890,18 @@
     <schema>iugonet</schema>
     <element>NumericalData</element>
     <qualifier>TemporalDescriptionTimeSpanStopDateRangeSearch</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>NumericalData</element>
+    <qualifier>TemporalDescriptionTimeSpanRelativeStopDate</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>NumericalData</element>
+    <qualifier>TemporalDescriptionTimeSpanRelativeStopDateRangeSearch</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1281,6 +1275,12 @@
     <schema>iugonet</schema>
     <element>Document</element>
     <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Document</element>
+    <qualifier>AccessInformationRepositoryID</qualifier>
   </dc-type>
 
   <dc-type>
