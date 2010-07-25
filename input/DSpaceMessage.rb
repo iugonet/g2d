@@ -71,6 +71,7 @@ class DSpaceType
  def test()
    fw = open( $outFilename, "w" )
    fw.printf("metadata.%s.%s = %s\n", $outSchema, "ResourceType", "Resource Type" )
+   fw.printf("metadata.%s.%s = %s\n", $outSchema, "ResourceID", "Resource ID" )
    for i in 0..@elementList.size-1
       writeValue( fw, $outSchema, @elementList[i], @qualifierList[i], @noteList[i] )
    end
