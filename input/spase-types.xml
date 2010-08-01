@@ -973,7 +973,13 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>NumericalData</element>
-    <qualifier>SpatialCoverageEasternmostLongitudeRangeSearch</qualifier>
+    <qualifier>SpatialCoverageEasternmostLongitudeRangeSearch1</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>NumericalData</element>
+    <qualifier>SpatialCoverageEasternmostLongitudeRangeSearch2</qualifier>
   </dc-type>
 
   <dc-type>
@@ -985,7 +991,13 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>NumericalData</element>
-    <qualifier>SpatialCoverageWesternmostLongitudeRangeSearch</qualifier>
+    <qualifier>SpatialCoverageWesternmostLongitudeRangeSearch1</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>NumericalData</element>
+    <qualifier>SpatialCoverageWesternmostLongitudeRangeSearch2</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1540,7 +1552,13 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Granule</element>
-    <qualifier>SpatialCoverageEasternmostLongitudeRangeSearch</qualifier>
+    <qualifier>SpatialCoverageEasternmostLongitudeRangeSearch1</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Granule</element>
+    <qualifier>SpatialCoverageEasternmostLongitudeRangeSearch2</qualifier>
   </dc-type>
 
   <dc-type>
@@ -1552,7 +1570,13 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Granule</element>
-    <qualifier>SpatialCoverageWesternmostLongitudeRangeSearch</qualifier>
+    <qualifier>SpatialCoverageWesternmostLongitudeRangeSearch1</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Granule</element>
+    <qualifier>SpatialCoverageWesternmostLongitudeRangeSearch2</qualifier>
   </dc-type>
 
   <dc-type>

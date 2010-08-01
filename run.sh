@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ruby main.rb
-./clean.sh
+#./clean.sh

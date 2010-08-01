@@ -3,23 +3,23 @@
 class DSpaceType
 
 # Input
- $elemDelimiter      = "$"
- $qualifierDelimiter = " "
- $noteDelimiter      = "#"
+ ElemDelimiter      = "$"
+ QualifierDelimiter = " "
+ NoteDelimiter      = "#"
 
 # Output
- $qualifierSeparator = ""
+ QualifierSeparator = ""
 
- $rangeExtension = "RangeSearch"
+ RangeExtension = "RangeSearch"
 
 # Output Schema
- $outSchema = "iugonet"
- $outNamespace = "http://www.iugonet.org/"
+ OutSchema = "iugonet"
+ OutNamespace = "http://www.iugonet.org/"
 
 # input filename
- $inFilename = "dublin-core-types.xml"
+ InFilename = "dublin-core-types.xml"
 # output filename
- $outFilename = "spase-types.xml"
+ OutFilename = "spase-types.xml"
 
  def initialize
    @elementList = Array.new
@@ -36,8 +36,8 @@ class DSpaceType
      sline = line.strip
      slen = sline.length
      if slen != 0
-       if sline[0].chr != $elemDelimiter
-         qnline = sline.split( $noteDelimiter )
+       if sline[0].chr != ElemDelimiter
+         qnline = sline.split( NoteDelimiter )
          if qnline.length == 1
             @elementList << qnline[0].strip
             @qualifierList << nil
@@ -48,15 +48,15 @@ class DSpaceType
             @noteList << qnline[1].strip
          end
        else
-         qline = sline.delete( $elemDelimiter )
-         qnline = (qline.strip).split( $noteDelimiter )
+         qline = sline.delete( ElemDelimiter )
+         qnline = (qline.strip).split( NoteDelimiter )
          if qnline.length == 1
            @elementList << @elementList[@elementList.size-1]
-           @qualifierList << (qnline[0].strip).tr($qualifierDelimiter,$qualifierSeparator)
+           @qualifierList << (qnline[0].strip).tr(QualifierDelimiter,QualifierSeparator)
            @noteList << nil
          else
            @elementList << @elementList[@elementList.size-1]
-           @qualifierList << (qnline[0].strip).tr($qualifierDelimiter,$qualifierSeparator)
+           @qualifierList << (qnline[0].strip).tr(QualifierDelimiter,QualifierSeparator)
            @noteList << qnline[1].strip
          end
        end
@@ -98,26 +98,30 @@ class DSpaceType
  def writeTypeDateTime( fw, schema, element, qualifier, note )
    if qualifier.include?("StartDate") ||
       qualifier.include?("StopDate")
-     qualifier = qualifier + $qualifierSeparator + $rangeExtension
+     qualifier = qualifier + QualifierSeparator + RangeExtension
    end
    writeType( fw, schema, element, qualifier, note )
  end
 
  def writeTypeSpatialCoverage( fw, schema, element, qualifier, note )
     if qualifier.include?("NorthernmostLatitude") ||
-       qualifier.include?("SouthernmostLatitude") ||
-       qualifier.include?("WesternmostLongitude") ||
-       qualifier.include?("EasternmostLongitude")
-      qualifier = qualifier + $qualifierSeparator + $rangeExtension
+       qualifier.include?("SouthernmostLatitude")
+      qualifier = qualifier + QualifierSeparator + RangeExtension
+      writeType( fw, schema, element, qualifier, note )
+    elsif qualifier.include?("WesternmostLongitude") ||
+          qualifier.include?("EasternmostLongitude")
+      qualifier1 = qualifier + QualifierSeparator + RangeExtension + "1"
+      writeType( fw, schema, element, qualifier1, note )
+      qualifier2 = qualifier + QualifierSeparator + RangeExtension + "2"
+      writeType( fw, schema, element, qualifier2, note )
     end
-    writeType( fw, schema, element, qualifier, note )
  end
 
  def test()
 
-   fw = open( $outFilename, "w" )
+   fw = open( OutFilename, "w" )
 
-     fr = open( $inFilename, "r" )
+     fr = open( InFilename, "r" )
      fr.each { |line|
        if line.include?("</dspace-dc-types>") == false
          fw.puts line
@@ -125,26 +129,26 @@ class DSpaceType
      }
      fr.close
 
-   writeSchema( fw, $outSchema, $outNamespace )
+   writeSchema( fw, OutSchema, OutNamespace )
 
    for i in 0..@elementList.size-1
-      writeType( fw, $outSchema, @elementList[i], @qualifierList[i], @noteList[i] )
+      writeType( fw, OutSchema, @elementList[i], @qualifierList[i], @noteList[i] )
       if @qualifierList[i] != nil &&
         ( @qualifierList[i].include?("StartDate") ||
           @qualifierList[i].include?("StopDate") )
-         writeTypeDateTime( fw, $outSchema, @elementList[i], @qualifierList[i], @noteList[i] )
+         writeTypeDateTime( fw, OutSchema, @elementList[i], @qualifierList[i], @noteList[i] )
       elsif @qualifierList[i] != nil &&
            ( @qualifierList[i].include?("NorthernmostLatitude") ||
              @qualifierList[i].include?("SouthernmostLatitude") ||
              @qualifierList[i].include?("EasternmostLongitude") ||
              @qualifierList[i].include?("WesternmostLongitude") )
-         writeTypeSpatialCoverage( fw, $outSchema, @elementList[i], @qualifierList[i], @noteList[i]  )
+         writeTypeSpatialCoverage( fw, OutSchema, @elementList[i], @qualifierList[i], @noteList[i]  )
       end
    end
 
-   writeType( fw, $outSchema, "filename", nil, nil )
-   writeType( fw, $outSchema, "ResourceID", nil, nil )
-   writeType( fw, $outSchema, "ResourceType", nil, nil )
+   writeType( fw, OutSchema, "filename",     nil, nil )
+   writeType( fw, OutSchema, "ResourceID",   nil, nil )
+   writeType( fw, OutSchema, "ResourceType", nil, nil )
 
    fw.puts "</dspace-dc-types>"
    fw.close

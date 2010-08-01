@@ -228,6 +228,93 @@ class Spase2DSpace
    return 0
  end
 
+ def setSpatialCoverageWesternmostLongitude( element, qualifier, text )
+    @wl_element = element
+    @wl_qualifier = qualifier
+    @wl_text = text
+    @wl = true
+ end
+ def setSpatialCoverageEasternmostLongitude( element, qualifier, text )
+    @el_element = element
+    @el_qualifier = qualifier
+    @el_text = text
+    @el = true
+ end
+
+ def setSpatialCoverageLongitude( fw )
+   wl = @wl_text.to_f
+   el = @el_text.to_f
+
+   if wl > el
+     puts "Error: Westernmost Longitude > Easternmost Longitude"
+     puts "Westernmost: " + wl
+     puts "Easternmost: " + el
+     exit
+   end
+
+   if wl >= -360.0 && wl <= 360.0
+   else
+     puts "Error: wl = "  + wl
+   end
+   if el >= -360.0 && el <= 360.0
+   else
+     puts "Error: el = " + el
+   end
+
+   if wl >= 0.0 && el >= 0.0
+   else
+     wl = wl + 360.0
+     el = el + 360.0
+   end
+
+   if wl >= 0.0 && wl <= 360.0 &&
+      el >= 0.0 && el <= 360.0
+     qualifier = @wl_qualifier + RangeExtension + "1"
+     wi = (wl * ShiftSpatialCoverage).to_i
+     ws = sprintf( SpatialCoverageFormat, wi )
+     write( fw, @wl_element, qualifier, ws )
+     qualifier = @el_qualifier + RangeExtension + "1"
+     ei = (el * ShiftSpatialCoverage).to_i
+     es = sprintf( SpatialCoverageFormat, ei )
+     write( fw, @el_element, qualifier, es )
+   end
+=begin
+   if wl >= 360.0 && wl <= 720.0 &&
+      el >= 360.0 && el <= 720.0
+    qualifier = @wl_qualifier + RangeExtension + "2"
+    wi = (wl * ShiftSpatialCoverage).to_i
+    ws = sprintf( SpatialCoverageFormat, wi )
+    write( fw, @wl_element, qualifier, ws )
+    qualifier = @el_qualifier + RangeExtension + "2"
+    ei = (el * ShiftSpatialCoverage).to_i
+    es = sprintf( SpatialCoverageFormat, ei )
+    write( fw, @el_element, qualifier, es )
+   end
+=end
+   if wl >= 0.0   && wl <= 360.0 &&
+      el >= 360.0 && el <= 720.0
+     qualifier = @wl_qualifier + RangeExtension + "1"
+     wi = (wl * ShiftSpatialCoverage).to_i
+     ws = sprintf( SpatialCoverage, wi )
+     write( fw, @wl_element, qualifier, ws )
+     qualifier = @el_qualifier + RangeExtension + "1"
+     ei = (360.0 * ShiftSpatialCoverage).to_i
+     es = sprintf( SpatialCoverageFormat, ei )
+     write( fw, @el_element, qualifier, es )
+
+     qualifier = @wl_qualifier + RangeExtension + "2"
+     wi = (0.0 * ShiftSpatialCoverage).to_i
+     ws = sprintf( SpatialCoverage, wi )
+     write( fw, @wl_element, qualifier, ws )
+     qualifier = @el_qualifier + RangeExtension + "2"
+     ei = ((el-360.0) * ShiftSpatialCoverage).to_i
+     es = sprintf( SpatialCoverage, ei )
+     write( fw, @el_element, qualifier, es )
+   end
+   @wl = false
+   @el = false
+ end
+
  def conv( filename, mdir )
 
    resourcetype = ""
@@ -243,8 +330,6 @@ class Spase2DSpace
      }
    end
    fr.close
-
-
 
    f = mdir + "/" + "dublin_core.xml"
    fw = open( f, "w")
@@ -276,7 +361,15 @@ class Spase2DSpace
            res = writeSpatialCoverageLatitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
          elsif @qualifierList[i].include?("WesternmostLongitude") ||
                @qualifierList[i].include?("EasternmostLongitude")
-           res = writeSpatialCoverageLongitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
+#           res = writeSpatialCoverageLongitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
+            if @qualifierList[i].include?("WesternmostLongitude")
+              setSpatialCoverageWesternmostLongitude( @elementList[i], @qualifierList[i], trxml(data.text) )
+            elsif @qualifierList[i].include?("EasternmostLongitude")
+              setSpatialCoverageEasternmostLongitude( @elementList[i], @qualifierList[i], trxml(data.text) )
+            end
+            if @wl && @el
+              setSpatialCoverageLongitude( fw )
+            end
          end
        end
        }
