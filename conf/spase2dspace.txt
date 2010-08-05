@@ -20,6 +20,18 @@ $ AccessInformation Acknowledgement
 $ TemporalDescription TimeSpan StartDate
 $ TemporalDescription TimeSpan StopDate
 $ TemporalDescription TimeSpan RelativeStopDate
+$ SpatialCoverage CoordinateSystem CoordinateRepresentation
+$ SpatialCoverage CoordinateSystem CoordinateSystemName
+$ SpatialCoverage NorthernmostLatitude
+$ SpatialCoverage SouthernmostLatitude
+$ SpatialCoverage EasternmostLongitude
+$ SpatialCoverage WesternmostLongitude
+$ SpatialCoverage CenterLatitude
+$ SpatialCoverage CenterLongitude
+$ SpatialCoverage Unit
+$ SpatialCoverage MinimumAltitude
+$ SpatialCoverage MaximumAltitude
+$ SpatialCoverage Reference
 NumericalData
 $ ResourceID
 $ ResourceHeader ResourceName
