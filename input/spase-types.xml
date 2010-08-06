@@ -1295,7 +1295,25 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Observatory</element>
+    <qualifier>LocationLatitudeRangeSearch</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Observatory</element>
     <qualifier>LocationLongitude</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Observatory</element>
+    <qualifier>LocationLongitudeRangeSearch1</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Observatory</element>
+    <qualifier>LocationLongitudeRangeSearch2</qualifier>
   </dc-type>
 
   <dc-type>

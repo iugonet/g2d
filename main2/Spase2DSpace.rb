@@ -183,6 +183,38 @@ class Spase2DSpace
    end
    return 0
  end
+
+ 
+ def writeLocationLatitude( fw, element, qualifier, text )
+   if qualifier == nil
+   else
+     qualifier = qualifier + QualifierSeparator + RangeExtension
+   end
+   tf = text.to_f
+   if -90.0 < tf && tf < 90.0
+     ti = ((tf+90.0)*ShiftSpatialCoverage).to_i
+     ts = sprintf( SpatialCoverageFormat, ti )
+     write( fw, element, qualifier, ts )
+   else
+      return -1
+   end
+   return 0
+ end
+ def writeLocationLongitude( fw, element, qualifier, text )
+   tf = text.to_f
+   if tf >= 0.0
+   else
+      tf = tf + 360.0
+   end
+   ti = (tf*ShiftSpatialCoverage).to_i
+   ts = sprintf( SpatialCoverageFormat, ti );
+   qualifier1 = qualifier + QualifierSeparator + RangeExtension + "1"
+   qualifier2 = qualifier + QualifierSeparator + RangeExtension + "2"
+   write( fw, element, qualifier1, ts )
+   write( fw, element, qualifier2, ts )
+ end
+
+
  ShiftSpatialCoverage = 100000.0
  SpatialCoverageFormat = "%08d"
  def writeSpatialCoverageLatitude( fw, element, qualifier, text )
@@ -278,19 +310,7 @@ class Spase2DSpace
      es = sprintf( SpatialCoverageFormat, ei )
      write( fw, @el_element, qualifier, es )
    end
-=begin
-   if wl >= 360.0 && wl <= 720.0 &&
-      el >= 360.0 && el <= 720.0
-    qualifier = @wl_qualifier + RangeExtension + "2"
-    wi = (wl * ShiftSpatialCoverage).to_i
-    ws = sprintf( SpatialCoverageFormat, wi )
-    write( fw, @wl_element, qualifier, ws )
-    qualifier = @el_qualifier + RangeExtension + "2"
-    ei = (el * ShiftSpatialCoverage).to_i
-    es = sprintf( SpatialCoverageFormat, ei )
-    write( fw, @el_element, qualifier, es )
-   end
-=end
+
    if wl >= 0.0   && wl <= 360.0 &&
       el >= 360.0 && el <= 720.0
      qualifier = @wl_qualifier + RangeExtension + "1"
@@ -355,13 +375,16 @@ class Spase2DSpace
          write( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
          if @qualifierList[i].include?("StartDate") ||
             @qualifierList[i].include?("StopDate")
-           res = writeDateTime( fw, @elementList[i], @qualifierList[i], trxml(data.text)  )
+           res = writeDateTime( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
+         elsif @qualifierList[i].include?("LocationLatitude")
+           writeLocationLatitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
+         elsif @qualifierList[i].include?("LocationLongitude")
+           writeLocationLongitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
          elsif @qualifierList[i].include?("NorthernmostLatitude") ||
                  @qualifierList[i].include?("SouthernmostLatitude")
            res = writeSpatialCoverageLatitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
          elsif @qualifierList[i].include?("WesternmostLongitude") ||
                @qualifierList[i].include?("EasternmostLongitude")
-#           res = writeSpatialCoverageLongitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
             if @qualifierList[i].include?("WesternmostLongitude")
               setSpatialCoverageWesternmostLongitude( @elementList[i], @qualifierList[i], trxml(data.text) )
             elsif @qualifierList[i].include?("EasternmostLongitude")

@@ -103,6 +103,18 @@ class DSpaceType
    writeType( fw, schema, element, qualifier, note )
  end
 
+ def writeTypeLocation( fw, schema, element, qualifier, note )
+    if qualifier.include?("LocationLatitude")
+       qualifier = qualifier + QualifierSeparator + RangeExtension
+       writeType( fw, schema, element, qualifier, note )
+    elsif qualifier.include?("LocationLongitude")
+       qualifier1 = qualifier + QualifierSeparator + RangeExtension + "1"
+       writeType( fw, schema, element, qualifier1, note )
+       qualifier2 = qualifier + QualifierSeparator + RangeExtension + "2"
+       writeType( fw, schema, element, qualifier2, note )
+    end
+ end
+
  def writeTypeSpatialCoverage( fw, schema, element, qualifier, note )
     if qualifier.include?("NorthernmostLatitude") ||
        qualifier.include?("SouthernmostLatitude")
@@ -137,6 +149,10 @@ class DSpaceType
         ( @qualifierList[i].include?("StartDate") ||
           @qualifierList[i].include?("StopDate") )
          writeTypeDateTime( fw, OutSchema, @elementList[i], @qualifierList[i], @noteList[i] )
+      elsif @qualifierList[i] != nil &&
+           ( @qualifierList[i].include?("LocationLatitude") ||
+             @qualifierList[i].include?("LocationLongitude") )
+         writeTypeLocation( fw, OutSchema, @elementList[i], @qualifierList[i], @noteList[i] )
       elsif @qualifierList[i] != nil &&
            ( @qualifierList[i].include?("NorthernmostLatitude") ||
              @qualifierList[i].include?("SouthernmostLatitude") ||
