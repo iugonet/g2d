@@ -315,7 +315,7 @@ class Spase2DSpace
       el >= 360.0 && el <= 720.0
      qualifier = @wl_qualifier + RangeExtension + "1"
      wi = (wl * ShiftSpatialCoverage).to_i
-     ws = sprintf( SpatialCoverage, wi )
+     ws = sprintf( SpatialCoverageFormat, wi )
      write( fw, @wl_element, qualifier, ws )
      qualifier = @el_qualifier + RangeExtension + "1"
      ei = (360.0 * ShiftSpatialCoverage).to_i
@@ -324,11 +324,11 @@ class Spase2DSpace
 
      qualifier = @wl_qualifier + RangeExtension + "2"
      wi = (0.0 * ShiftSpatialCoverage).to_i
-     ws = sprintf( SpatialCoverage, wi )
+     ws = sprintf( SpatialCoverageFormat, wi )
      write( fw, @wl_element, qualifier, ws )
      qualifier = @el_qualifier + RangeExtension + "2"
      ei = ((el-360.0) * ShiftSpatialCoverage).to_i
-     es = sprintf( SpatialCoverage, ei )
+     es = sprintf( SpatialCoverageFormat, ei )
      write( fw, @el_element, qualifier, es )
    end
    @wl = false
