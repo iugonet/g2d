@@ -9,6 +9,7 @@ $ AccessInformation Acknowledgement
 $ TimeSpan StartDate
 $ TimeSpan StopDate
 $ TimeSpan RelativeStopDate
+$ Keyword
 DisplayData
 $ ResourceID
 $ ResourceHeader ResourceName
@@ -20,6 +21,7 @@ $ AccessInformation Acknowledgement
 $ TemporalDescription TimeSpan StartDate
 $ TemporalDescription TimeSpan StopDate
 $ TemporalDescription TimeSpan RelativeStopDate
+$ Keyword
 $ SpatialCoverage CoordinateSystem CoordinateRepresentation
 $ SpatialCoverage CoordinateSystem CoordinateSystemName
 $ SpatialCoverage NorthernmostLatitude
@@ -55,9 +57,9 @@ $ TemporalDescription TimeSpan StartDate
 $ TemporalDescription TimeSpan StopDate
 $ TemporalDescription TimeSpan RelativeStopDate
 $ ObservedRegion
+$ Keyword
 $ Parameter Name
 $ Parameter Description
-$ Keyword
 $ SpatialCoverage CoordinateSystem CoordinateRepresentation
 $ SpatialCoverage CoordinateSystem CoordinateSystemName
 $ SpatialCoverage NorthernmostLatitude
@@ -116,6 +118,7 @@ $ ResourceHeader Acknowledgement
 $ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Acknowledgement
+$ Keyword
 Registry
 $ ResourceID
 $ ResourceHeader ResourceName
