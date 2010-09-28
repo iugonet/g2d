@@ -10,10 +10,12 @@ class Config
   fr = open( Serv_conf, "r" )
   fr.each { |line|
     lt = (line.chomp).split(/=/)
-    if lt[0].strip == "HOST"
-      @host = lt[1].strip
-    elsif lt[0].strip == "USER"
-      @user = lt[1].strip
+    if lt.size == 2
+      if lt[0].strip == "HOST"
+        @host = lt[1].strip
+      elsif lt[0].strip == "USER"
+        @user = lt[1].strip
+      end
     end
   }
   fr.close

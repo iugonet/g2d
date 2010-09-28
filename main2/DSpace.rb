@@ -7,10 +7,12 @@ class DSpace
      fr = open( f, "r" )
      fr.each { |line|
        lt = (line.chomp).split(/=/)
-       if lt[0].strip == "DIR"
-          @idir = lt[1].strip
-       elsif lt[0].strip == "EMAIL"
-          @email = lt[1].strip
+       if lt.size == 2
+         if lt[0].strip == "DIR"
+           @idir = lt[1].strip
+         elsif lt[0].strip == "EMAIL"
+           @email = lt[1].strip
+         end
        end
      }
      fr.close
