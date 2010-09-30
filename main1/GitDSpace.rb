@@ -1,7 +1,9 @@
 # -*- coding : utf-8 -*-
 
 require 'fileutils'
+
 require 'main1/Git'
+require 'main1/HandleIDList'
 
 class GitDSpace
 
@@ -79,24 +81,22 @@ class GitDSpace
      f = @repoList[i].gsub(/[\/]/,'_')
      b = File.basename( f, ".git" )
      cf = @repoDir + "/" + b + Commit_log
-     if !FileTest.exist?( cf )
-       fr = open( cf, "w" )
-       fr.close
-     end
+     initFile( cf )
      @commitFileList << cf
    end
    hf = @repoDir + "/" + ItemHandle_log
    sf = @repoDir + "/" + StructureHandle_log
-   if !FileTest.exist?( hf )
-     fr = open( hf, "w" )
-     fr.close
-   end
-   if !FileTest.exist?( sf )
-     fr = open( sf, "w" )
-     fr.close
-   end
+   initFile( hf )
+   initFile( sf )
    @itemHandleFile = hf
    @structureHandleFile = sf
+ end
+
+ def initFile( filename )
+   if !FileTest.exist?( filename )
+     fr = open( filename, "w" )
+     fr.close
+   end
  end
 
  def gitPush( message )
@@ -113,37 +113,18 @@ class GitDSpace
    return stList
  end
 
- def writeStruct( list )
-   stList = getLineList( @structureHandleFile )
-   wList = stList + list
-   wList.uniq!
-   fw = open( @structureHandleFile, "w" )
-   for i in 0..wList.size-1
-      fw.puts wList[i]
-   end
-   fw.close
-   checkStruct()
- end
-
- def checkStruct()
-   stList = getLineList( @structureHandleFile )
-   for i in 0..stList.size-2
-        il = stList[i].split(" ")
-     for j in i+1..stList.size-1
-        jl = stList[j].split(" ")
-        if il[0] == jl[0] || il[1] == jl[1]
-           puts "Error: structure"
-           exit(0)
-        end
-     end
-   end
+ def writeStruct( addList )
+   hid = HandleIDList.new( @structureHandleFile )
+   hid.add( addList )
+   hid.write
+   hid.checkOverlap
  end
 
  def getCommitID( i )
-   cf = @commitFileList[i]
+   filename = @commitFileList[i]
    el = ""
    begin
-     fr = open( cf, "r" )
+     fr = open( filename, "r" )
      fr.each { |line|
        el = (line.chomp).strip
      }
@@ -160,51 +141,15 @@ class GitDSpace
  end
 
  def deleteHandleID2( file, id )
-   hList = getLineList( @itemHandleFile )
-   ii = -1
-   for i in 0..hList.size-1
-     il = hList[i].split(" ")
-     if il[0] == file && il[1] == id
-        ii = i
-        break
-     end
-   end
-   if ii != -1
-     hList.delete_at(ii)
-     puts "Delete Item: " + file
-     fw = open( @itemHandleFile, "w" )
-     for i in 0..hList.size-1
-        fw.puts hList[i]
-     end
-     fw.close
-   else
-     puts "Error: delete item: " + file
-     exit(0)
-   end
+   hid = HandleIDList.new( @itemHandleFile )
+   hid.deleteID( id )
+   hid.write
  end
 
  def deleteHandleID( file )
-   hList = getLineList( @itemHandleFile )
-   ii = -1
-   for i in 0..hList.size-1
-     il = hList[i].split(" ")
-     if il[0] == file
-        ii = i
-        break
-     end
-   end
-   if ii != -1
-     hList.delete_at(ii)
-     puts "Delete Item: " + file
-     fw = open( @itemHandleFile, "w" )
-     for i in 0..hList.size-1
-       fw.puts hList[i]
-     end
-     fw.close
-   else
-     puts "Error: delete item: " + file
-     exit(0)
-   end
+   hid = HandleIDList.new( @itemHandleFile )
+   hid.deleteFile( file )
+   hid.write
  end
 
  def getHandleID( file )
@@ -219,32 +164,11 @@ class GitDSpace
    end
  end
 
- def setHandleID( list )
-  hList = getLineList( @itemHandleFile )
-  wList = hList + list
-  wList.uniq!
-  fw = open( @itemHandleFile, "w" )
-  for i in 0..wList.size-1
-    fw.puts wList[i]
-  end
-  fw.close
-  checkItemHandle()
- end
-
- def checkItemHandle()
-   hList = getLineList( @itemHandleFile )
-   for i in 0..hList.size-2
-      il = hList[i].split(" ")
-     for j in i+1..hList.size-1
-       jl = hList[j].split(" ")
-       if il[0] == jl[0] || il[1] == jl[1]
-          puts "Error: item handle."
-          puts il[0] + " : " + jl[0]
-          puts il[1] + " : " + jl[1]
-          exit
-       end
-     end
-   end
+ def setHandleID( addList )
+   hid = HandleIDList.new( @itemHandleFile )
+   hid.add( addList )
+   hid.write
+   hid.checkOverlap
  end
 
  def getLineList( filename )

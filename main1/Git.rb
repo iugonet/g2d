@@ -27,15 +27,15 @@ class Git
    return str1, str2, str3
  end
 
- def getLogCommand( filename )
+ def getLogCommand( outfilename )
    str = sprintf( "%s log | grep \"commit \" | grep -v \" commit\" > %s",
-                  GitCommand, filename )
+                  GitCommand, outfilename )
    return str
  end
 
- def getShowCommand( id, tempfile )
+ def getShowCommand( commitID, outfilename )
    str = sprintf( "%s show --pretty=oneline -p %s > %s",
-                  GitCommand, id, tempfile )
+                  GitCommand, commitID, outfilename )
    return str
  end
 

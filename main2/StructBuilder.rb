@@ -146,10 +146,12 @@ class StructBuilder
 
     cstr = @ds.getStructureBuilderCommand( fni, fno, ha, type )
     system( cstr )
+
     nameList = Array.new
     handleList = Array.new
     readLog( fno, nameList, handleList )
     writeStruct( base, nameList, handleList )
+
     readStruct()
     setStruct()
   end
@@ -167,20 +169,15 @@ class StructBuilder
 
  def scanID( elem, nameList, handleList )
    elem.elements.each("collection"){|col|
-     name   = col.get_text("name").to_s
-     handle = col.attribute("identifier").to_s
-     nameList << name
-     handleList << handle
+     nameList   << col.get_text("name").to_s
+     handleList << col.attribute("identifier").to_s
    }
    elem.elements.each("community"){|com|
-     name   = com.get_text("name").to_s
-     handle = com.attribute("identifier").to_s
-     nameList << name
-     handleList << handle
+     nameList   << com.get_text("name").to_s
+     handleList << com.attribute("identifier").to_s
      scanID( com, nameList, handleList )
    }
  end
-
 
  def writeInit( filename )
    fw = open( filename, "w" )
