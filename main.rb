@@ -30,25 +30,25 @@ aState.test
 
 structure = StructBuilder.new( pwd, repo.getWorkDir, gSpace )
 structure.setRepoDirList( conf.getRepoDirList )
-structure.setTopList( conf.getTopList )
 structure.setFileList( aState.getAddList )
 structure.build
 
 item_import = ItemImport.new( pwd, repo.getWorkDir, gSpace )
 item_import.setFileList( aState.getAddList )
 item_import.setRepoDirList( conf.getRepoDirList )
-item_import.setTopList( conf.getTopList )
 item_import.make
 item_import.run
 item_import.setMapfile
 
 item_replace = ItemReplace.new( pwd, repo.getWorkDir, gSpace )
 item_replace.setFileList( aState.getReplaceList )
+item_replace.setRepoDirList( conf.getRepoDirList )
 item_replace.make
 item_replace.run
 
 item_delete = ItemDelete.new( pwd, repo.getWorkDir, gSpace )
 item_delete.setFileList( aState.getDeleteList )
+item_delete.setRepoDirList( conf.getRepoDirList )
 item_delete.make
 item_delete.run
 item_delete.updateMapfile

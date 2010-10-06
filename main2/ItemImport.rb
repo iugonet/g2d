@@ -9,7 +9,6 @@ require 'util/ScriptMaker'
 
 class ItemImport
 
- EXC = "Metadata_Draft"
  TempBase    = "ImportData_"
  TempBaseAll = "ImportData_*"
  Runfile = "runImport.sh"
@@ -38,9 +37,6 @@ class ItemImport
  def setRepoDirList( repoDirList )
    @repoDirList = repoDirList
  end
- def setTopList( topList )
-   @topList = topList
- end
 
  def make()
    frf = @pwd + "/" + Runfile
@@ -62,19 +58,16 @@ class ItemImport
      dir = File.dirname( file )
      hdir = File.dirname( file )
 
-     topd = ""
      for j in 0..@repoDirList.size-1
-       r = File.dirname(@repoDirList[j])
-       rd = r.gsub(/[\/]/,'_')
-       rdir = @pwd + "/" + @workDir + "/" + rd + "/" + File.basename(@repoDirList[j],".git")
-       if hdir.include?( rdir )
-          hdir.slice!(0,rdir.length+1)
-         if @topList[j] != nil &&
-            @topList[j] != ""
-           hdir = @topList[j] + "/" + hdir
-           topd = @topList[j]
-           break
-         end
+       repository = @repoDirList[j]
+       newRepositoryName = File.basename(repository,".git")
+       repositoryDir     = File.dirname(repository)
+       newRepositoryDir = repositoryDir.gsub(/[\/]/,'_')
+       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
+       if hdir.include?( repositoryAbsolutePath )
+         len = repositoryAbsolutePath.length
+         hdir.slice!(0,len+1)
+         break
        end
      end
      ha = @stHash[hdir]
@@ -101,21 +94,15 @@ class ItemImport
         mdir = tdir+"/"+(i+1).to_s
         Dir.mkdir( mdir )
         FileUtils.install( list[i],mdir,:mode=>0664)
-        cfile = mdir+"/"+"contents"
-        fwc = open(cfile,"w")
-        fwc.puts File.basename(list[i])
-        fwc.close
+
+        makeContentsFile( mdir, list[i] )
 
         s2d.conv( list[i], mdir )
 
         p = tdir+"/impfile"
         fg = open( p, "a" )
         llen = list[i].size
-        if topd != ""
-        fgl = topd + "/" + list[i].slice(rdir.length+1,llen-1)
-        else
-        fgl = list[i].slice(rdir.length+1,llen-1)
-        end
+        fgl = list[i].slice(repositoryAbsolutePath.length+1,llen-1)
         fg.printf( "%d %s\n", i, fgl )
         fg.close
      end
@@ -130,6 +117,13 @@ class ItemImport
 
    sm.finalize
    Dir.chdir( @pwd )
+ end
+
+ def makeContentsFile( mdir, file )
+   cfile = mdir + "/" + "contents"
+   fwc = open( cfile, "w" )
+   fwc.puts File.basename( list[i] )
+   fwc.close
  end
 
  def run
@@ -162,7 +156,7 @@ class ItemImport
      fr.close
      if ml.size != pl.size
        puts "Error: " + name
-       exit(0)
+       exit
      end
      for i in 0..ml.size-1
        mll = (ml[i].chomp).split(" ")

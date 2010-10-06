@@ -156,9 +156,7 @@ class GitDSpace
    hList = getLineList( @itemHandleFile )
    for i in 0..hList.size-1
      il = hList[i].split(" ")
-     puts il[0] + " : " + file
      if il[0] == file
-        puts il[1]
         return il[1]
      end
    end

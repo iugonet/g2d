@@ -8,7 +8,6 @@ require 'util/ScriptMaker'
 
 class ItemReplace
 
- EXC = "Metadata_Draft"
  TempBase = "ReplaceData_"
  Runfile = "runReplace.sh"
 
@@ -33,6 +32,9 @@ class ItemReplace
  def setFileList( replaceList )
    @replaceList = replaceList
  end
+ def setRepoDirList( repoDirList )
+   @repoDirList = repoDirList
+ end
 
  def make()
    frf = @pwd + "/" + Runfile
@@ -53,9 +55,18 @@ class ItemReplace
      dir = File.dirname( file )
      hdir = File.dirname( file )
 
-     rdir = @pwd + "/" + @workDir + "/" + EXC
-     len = rdir.length
-     hdir.slice!(0,len+1)
+     for j in 0..@repoDirList.size-1
+       repository = @repoDirList[j]
+       newRepositoryName = File.basename(repository,".git")
+       repositoryDir = File.dirname(repository)
+       newRepositoryDir = repositoryDir.gsub(/[\/]/,'_')
+       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
+       if hdir.include?( repositoryAbsolutePath )
+         len = repositoryAbsolutePath.length
+         hdir.slice!(0,len+1)
+         break
+       end
+     end
      ha = @stHash[hdir]
 
      list = Array.new
@@ -87,7 +98,7 @@ class ItemReplace
         s2d.conv( list[i], mdir )
 
         llen = list[i].size
-        fgl = list[i].slice(len+1,llen-1)
+        fgl = list[i].slice(repositoryAbsolutePath.length+1,llen-1)
         id = @gSpace.getHandleID( fgl )
         puts "id : " + id.to_s
         fim = tdir + "/mapfile"

@@ -56,9 +56,6 @@ class StructBuilder
  def setRepoDirList( repoDirList )
    @repoDirList = repoDirList
  end
- def setTopList( topList )
-   @topList = topList
- end
 
  def setFileList( addList )
    @addList = addList
@@ -74,11 +71,6 @@ class StructBuilder
        rdir = @pwd + "/" + @workDir + "/" + rd + "/" + File.basename( @repoDirList[j], ".git" )
        if dir.include?( rdir )
          dir.slice!(0,rdir.length+1)
-         if @topList[j] != nil &&
-            @topList[j] != ""
-           dir = @topList[j] + "/" + dir
-           break
-         end
        end
      end
      @dirList << dir

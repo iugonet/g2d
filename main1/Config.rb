@@ -1,13 +1,13 @@
 # -*- coding : utf-8 -*-
 
 class Config
- Serv_conf = "conf/serv.conf"
- Repo_conf = "conf/repo.conf"
+ SERVER_CONF = "conf/serv.conf"
+ REPOSITORY_CONF = "conf/repo.conf"
 
  def initialize( pwd )
   @pwd = pwd
 
-  fr = open( Serv_conf, "r" )
+  fr = open( SERVER_CONF, "r" )
   fr.each { |line|
     lt = (line.chomp).split(/=/)
     if lt.size == 2
@@ -21,18 +21,11 @@ class Config
   fr.close
 
   @repoList = Array.new
-  @topList  = Array.new
-  fr = open( Repo_conf, "r" )
+  fr = open( REPOSITORY_CONF, "r" )
   fr.each { |line|
-    if  line.strip != "" &&
-       !line.include?("#")
-      lt = (line.chomp).split(/ /)
-        @repoList << (lt[0]).strip
-        if lt[1] != nil
-          @topList  << (lt[1]).strip
-        else
-          @topList  << nil
-        end
+    if  (line.chomp).strip != "" &&
+        !line.include?("#")
+      @repoList << (line.chomp).strip
     end
   }
   fr.close
@@ -55,9 +48,6 @@ class Config
 
  def getRepoList
    return @repoList
- end
- def getTopList
-   return @topList
  end
 
  def getRepoDirList
