@@ -44,7 +44,7 @@ class StructBuilder
   for i in 0..@stList.size-1
     la = @stList[i].split(" ")
     if la.length == 2
-      @stDirList << la[0].strip
+      @stDirList    << la[0].strip
       @stHandleList << la[1].strip
     else
       puts "Error"
@@ -66,11 +66,14 @@ class StructBuilder
      dir = File.dirname( @addList[i] )
 
      for j in 0..@repoDirList.size-1
-       r = File.dirname(@repoDirList[j])
-       rd = r.gsub(/[\/]/,'_')
-       rdir = @pwd + "/" + @workDir + "/" + rd + "/" + File.basename( @repoDirList[j], ".git" )
-       if dir.include?( rdir )
-         dir.slice!(0,rdir.length+1)
+       repository = @repoDirList[j]
+       newRepositoryName = File.basename(repository,".git")
+       repositoryDir     = File.dirname(repository)
+       newRepositoryDir  = repositoryDir.gsub(/[\/]/,'_')
+       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
+       if dir.include?( repositoryAbsolutePath )
+         len = repositoryAbsolutePath.length
+         dir.slice!(0,len+1)
        end
      end
      @dirList << dir
@@ -161,14 +164,17 @@ class StructBuilder
 
  def scanID( elem, nameList, handleList )
    elem.elements.each("collection"){|col|
-     nameList   << col.get_text("name").to_s
-     handleList << col.attribute("identifier").to_s
+     getID( col, nameList, handleList )
    }
    elem.elements.each("community"){|com|
-     nameList   << com.get_text("name").to_s
-     handleList << com.attribute("identifier").to_s
+     getID( com, nameList, handleList )
      scanID( com, nameList, handleList )
    }
+ end
+
+ def getID( element, nameList, handleList )
+   nameList   << element.get_text("name").to_s
+   handleList << element.attribute("identifier").to_s
  end
 
  def writeInit( filename )
