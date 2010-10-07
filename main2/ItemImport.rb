@@ -122,7 +122,7 @@ class ItemImport
  def makeContentsFile( mdir, file )
    cfile = mdir + "/" + "contents"
    fwc = open( cfile, "w" )
-   fwc.puts File.basename( list[i] )
+   fwc.puts File.basename( file )
    fwc.close
  end
 

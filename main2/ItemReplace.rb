@@ -90,10 +90,8 @@ class ItemReplace
         mdir = tdir + "/" + (i+1).to_s
         Dir.mkdir( mdir )
         FileUtils.install( list[i],mdir,:mode=>0644)
-        cfile = mdir + "/" + "contents"
-        fwc = open( cfile, "w" )
-        fwc.puts File.basename(list[i])
-        fwc.close
+
+        makeContentsFile( mdir, list[i] )
 
         s2d.conv( list[i], mdir )
 
@@ -117,6 +115,13 @@ class ItemReplace
 
    sm.finalize
    Dir.chdir( @pwd )
+ end
+
+ def makeContentsFile( mdir, file )
+   cfile = mdir + "/" + "contents"
+   fwc = open( cfile, "w" )
+   fwc.puts File.basename( file )
+   fwc.close
  end
 
  def run
