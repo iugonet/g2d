@@ -40,7 +40,7 @@ class ItemDelete
      dir = File.dirname( file )
      hdir = File.dirname( file )
      for j in 0..@repoDirList.size-1
-       repository = @repoDirList[i]
+       repository = @repoDirList[j]
        newRepositoryName = File.basename(repository,".git")
        repositoryDir     = File.dirname(repository)
        newRepositoryDir = repositoryDir.gsub(/[\/]/,'_')
