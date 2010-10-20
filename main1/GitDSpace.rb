@@ -117,7 +117,9 @@ class GitDSpace
    hid = HandleIDList.new( @structureHandleFile )
    hid.add( addList )
    hid.write
-   hid.checkOverlap
+   if addList != nil && addList.size > 0
+     hid.checkOverlap
+   end
  end
 
  def getCommitID( i )
@@ -166,7 +168,9 @@ class GitDSpace
    hid = HandleIDList.new( @itemHandleFile )
    hid.add( addList )
    hid.write
-   hid.checkOverlap
+   if addList != nil && addList.size > 0
+     hid.checkOverlap
+   end
  end
 
  def getLineList( filename )
