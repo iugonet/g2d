@@ -2,6 +2,7 @@
 require 'fileutils'
 require 'tempfile'
 
+require 'main2/FileList'
 require 'main2/Spase2DSpace'
 require 'main2/DSpace'
 require 'util/ScriptMaker'
@@ -23,17 +24,14 @@ class ItemReplace
    @stHash = Hash.new
    for i in 0..@stList.size-1
      la = @stList[i].split(" ")
-     if la.length == 2
+     if la.length == 3
         @stHash[ la[0].strip ] = la[1].strip
      end
    end
  end
 
- def setFileList( replaceList )
-   @replaceList = replaceList
- end
- def setRepoDirList( repoDirList )
-   @repoDirList = repoDirList
+ def setFileList( fileList )
+   @fileList = fileList
  end
 
  def make()
@@ -44,85 +42,80 @@ class ItemReplace
    s2d.checkLength
    s2d.getQueryList
 
-   ii = 0
-   while ( @replaceList.size > 0 )
-     tempFile = Tempfile.new( TempBase, @pwd )
-     tdir = tempFile.path
-     tempFile.close( true )
-     Dir.mkdir( tdir )
+   while ( @fileList.size > 0 )
+     tempDir = getTempDir
+     Dir.mkdir( tempDir )
+     mapfile = tempDir + "/mapfile"
 
-     file = @replaceList[0]
-     dir = File.dirname( file )
-     hdir = File.dirname( file )
+     dir = File.dirname( @fileList[0].getRelative )
+     handleID = @stHash[ dir ]
 
-     for j in 0..@repoDirList.size-1
-       repository = @repoDirList[j]
-       newRepositoryName = File.basename(repository,".git")
-       repositoryDir = File.dirname(repository)
-       newRepositoryDir = repositoryDir.gsub(/[\/]/,'_')
-       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
-       if hdir.include?( repositoryAbsolutePath )
-         len = repositoryAbsolutePath.length
-         hdir.slice!(0,len+1)
-         break
-       end
-     end
-     ha = @stHash[hdir]
+     addList, delIndexList = getAddList( dir )
+     deleteList( delIndexList )
 
-     list = Array.new
-     dlist = Array.new
-     list << file
-     @replaceList.delete_at(0)
-     for i in 0..@replaceList.size-1
-        f = @replaceList[i]
-        d = File.dirname( f )
-        if d == dir
-           list << @replaceList[i]
-           dlist << i
-        end
-     end
-     for i in 0..dlist.size-1
-        j = dlist.size-1-i
-        @replaceList.delete_at( dlist[j] )
+     for i in 0..addList.size-1
+       afile = addList[i].getAbsolute
+       rfile = addList[i].getRelative
+       itemDir = tempDir + "/" + (i+1).to_s
+       Dir.mkdir( itemDir )
+       FileUtils.install( afile, itemDir, :mode=>0644 )
+       makeContentsFile( itemDir, afile )
+       s2d.conv( afile, itemDir )
+
+       writeMapfile( mapfile, i, rfile )
      end
 
-     for i in 0..list.size-1
-        mdir = tdir + "/" + (i+1).to_s
-        Dir.mkdir( mdir )
-        FileUtils.install( list[i],mdir,:mode=>0644)
-
-        makeContentsFile( mdir, list[i] )
-
-        s2d.conv( list[i], mdir )
-
-        llen = list[i].size
-        fgl = list[i].slice(repositoryAbsolutePath.length+1,llen-1)
-        id = @gSpace.getHandleID( fgl )
-        puts "id : " + id.to_s
-        fim = tdir + "/mapfile"
-        fg = open( fim, "a" )
-        fg.printf("%d %s\n", i+1, id )
-        fg.close
-     end
-
-     sdir = tdir
-
-     mapfile = tdir + "/mapfile"
-     cstr = @ds.getReplaceCommand( ha, sdir, mapfile )
+     cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
      sm.puts( cstr )
-     ii = ii + 1
    end
 
    sm.finalize
    Dir.chdir( @pwd )
  end
 
+ def getTempDir()
+    tempFile = Tempfile.new( TempBase, @pwd )
+    tdir = tempFile.path
+    tempFile.close( true )
+    return tdir
+ end
+
+ def getAddList( addDir )
+   addList = Array.new
+   delIndexList = Array.new
+   for i in 0..@fileList.size-1
+     file = @fileList[i].getRelative
+     dir = File.dirname( file )
+     if dir == addDir
+       addList << @fileList[i]
+       delIndexList << i
+     end
+   end
+   return addList, delIndexList
+ end
+
+ def deleteList( delIndexList )
+   for i in 0..delIndexList.size-1
+     ri = delIndexList.size-1-i
+     di = delIndexList[ri]
+     @fileList.delete_at( di )
+   end
+ end
+
  def makeContentsFile( mdir, file )
-   cfile = mdir + "/" + "contents"
-   fwc = open( cfile, "w" )
+   filename = mdir + "/contents"
+   fwc = open( filename, "w" )
    fwc.puts File.basename( file )
    fwc.close
  end
+
+ def writeMapfile( mapfile, i, file )
+   handleID = @gSpace.getHandleID( file )
+   fw = open( mapfile, "a" )
+   fw.printf( "%d %s\n", i+1, handleID )
+   fw.close
+ end
+
 
  def run
    Dir.chdir( @pwd )

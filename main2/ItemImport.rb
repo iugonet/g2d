@@ -2,10 +2,10 @@
 require 'fileutils'
 require 'tempfile'
 
+require 'main2/FileList'
 require 'main2/Spase2DSpace'
 require 'main2/DSpace'
 require 'util/ScriptMaker'
-
 
 class ItemImport
 
@@ -25,17 +25,14 @@ class ItemImport
    @stHash = Hash.new
    for i in 0..@stList.size-1
      la = @stList[i].split(" ")
-     if la.length == 2
+     if la.length == 3
         @stHash[ la[0].strip ] = la[1].strip
      end
    end
  end
 
- def setFileList( addList )
-   @addList = addList
- end
- def setRepoDirList( repoDirList )
-   @repoDirList = repoDirList
+ def setFileList( fileList )
+   @fileList = fileList
  end
 
  def make()
@@ -46,77 +43,64 @@ class ItemImport
    s2d.checkLength
    s2d.getQueryList
 
-   ii = 0
-   while ( @addList.size > 0 )
-     tempFile = Tempfile.new( TempBase, @pwd)
-     tdir = tempFile.path
-     tempFile.close(true)
-     Dir.mkdir( tdir )
+   while ( @fileList.size > 0  )
+     tempDir = getTempDir
+     Dir.mkdir( tempDir )
+     logfile = tempDir + "/impfile"
 
+     dir = File.dirname( @fileList[0].getRelative )
+     handleID = @stHash[ dir ]
 
-     file = @addList[0]
-     dir = File.dirname( file )
-     hdir = File.dirname( file )
+     addList, delIndexList = getAddList( dir )
+     deleteList( delIndexList )
 
-     for j in 0..@repoDirList.size-1
-       repository = @repoDirList[j]
-       newRepositoryName = File.basename(repository,".git")
-       repositoryDir     = File.dirname(repository)
-       newRepositoryDir = repositoryDir.gsub(/[\/]/,'_')
-       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
-       if hdir.include?( repositoryAbsolutePath )
-         len = repositoryAbsolutePath.length
-         hdir.slice!(0,len+1)
-         break
-       end
-     end
-     ha = @stHash[hdir]
-
-     list  = Array.new
-     dlist = Array.new
-     list << file
-     @addList.delete_at(0)
-     for i in 0..@addList.size-1
-        f = @addList[i]
-        d = File.dirname( f )
-        if d == dir
-          list << @addList[i]
-         dlist << i
-        end
+     for i in 0..addList.size-1
+       afile = addList[i].getAbsolute
+       rfile = addList[i].getRelative
+       itemDir = tempDir + "/" + (i+1).to_s
+       Dir.mkdir( itemDir )
+       FileUtils.install( afile, itemDir, :mode=>0664 )
+       makeContentsFile( itemDir, afile )
+       s2d.conv( afile, itemDir )
+       writeImportLog( logfile, i, rfile )
      end
 
-     for i in 0..dlist.size-1
-       j = dlist.size-1-i
-       @addList.delete_at( dlist[j] )
-     end
-
-     for i in 0..list.size-1
-        mdir = tdir+"/"+(i+1).to_s
-        Dir.mkdir( mdir )
-        FileUtils.install( list[i],mdir,:mode=>0664)
-
-        makeContentsFile( mdir, list[i] )
-
-        s2d.conv( list[i], mdir )
-
-        p = tdir+"/impfile"
-        fg = open( p, "a" )
-        llen = list[i].size
-        fgl = list[i].slice(repositoryAbsolutePath.length+1,llen-1)
-        fg.printf( "%d %s\n", i, fgl )
-        fg.close
-     end
-
-     sdir = tdir
-
-     mapfile = tdir + "/mapfile"
-     cstr = @ds.getImportCommand( ha, sdir, mapfile )
+     mapfile = tempDir + "/mapfile"
+     cstr = @ds.getImportCommand( handleID, tempDir, mapfile )
      sm.puts( cstr )
-     ii = ii + 1
    end
 
    sm.finalize
    Dir.chdir( @pwd )
+ end
+
+ def getTempDir()
+    tempFile = Tempfile.new( TempBase, @pwd )
+    tdir = tempFile.path
+    tempFile.close( true )
+    return tdir
+ end
+
+ def getAddList( addDir )
+   addList = Array.new
+   delIndexList = Array.new
+   for i in 0..@fileList.size-1
+     file = @fileList[i].getRelative
+     dir = File.dirname( file )
+     if dir == addDir
+       addList << @fileList[i]
+       delIndexList << i
+     end
+   end
+   return addList, delIndexList
+ end
+
+ def deleteList( delIndexList )
+   for i in 0..delIndexList.size-1
+     ri = delIndexList.size-1-i
+     di = delIndexList[ri]
+     @fileList.delete_at( di )
+   end
  end
 
  def makeContentsFile( mdir, file )
@@ -124,6 +108,12 @@ class ItemImport
    fwc = open( cfile, "w" )
    fwc.puts File.basename( file )
    fwc.close
+ end
+
+ def writeImportLog( logfile, i, file )
+   fw = open( logfile, "a" )
+   fw.printf( "%d %s\n", i, file )
+   fw.close
  end
 
  def run
@@ -135,25 +125,13 @@ class ItemImport
 
  def setMapfile
    newList = Array.new
-   Dir.glob(TempBaseAll).each{|name|
-     ml = Array.new
+   Dir.glob(TempBaseAll).each{ |name|
      pl = Array.new
      mapfile = name + "/mapfile"
-     fr = open( mapfile, "r" )
-     fr.each {|line|
-       if ((line.chomp).strip).size != 0
-         ml << (line.chomp).strip
-       end
-     }
-     fr.close
-     p = name + "/impfile"
-     fr = open( p, "r" )
-     fr.each {|line|
-       if ((line.chomp).strip).size != 0
-         pl << (line.chomp).strip
-       end
-     }
-     fr.close
+     ml = readLine( mapfile )
+     importLog = name + "/impfile"
+     pl = readLine( importLog )
+
      if ml.size != pl.size
        puts "Error: " + name
        exit
@@ -165,6 +143,18 @@ class ItemImport
      end
    }
    @gSpace.setHandleID( newList )
+ end
+
+ def readLine( filename )
+   l = Array.new
+   fr = open( filename, "r" )
+   fr.each { |line|
+     if ((line.chomp).strip).size != 0
+       l << (line.chomp).strip
+     end
+   }
+   fr.close
+   return l
  end
 
 end

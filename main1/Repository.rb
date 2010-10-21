@@ -95,23 +95,26 @@ class Repository
  end
 
  def getChangeList
-  for i in 0..@commitFileList.size-1
-    now_id = @gSpace.getCommitID( i )
-    Dir.chdir( @repo[i] )
-    commitLineList = Array.new
-    fr = open( @commitFileList[i], "r" )
-    fr.each { |line|
-      commitLineList << (line.chomp).strip
-    }
-    fr.close
-    i_id = commitLineList.size
-    for k in 0..commitLineList.size-1
-       if commitLineList[k].include?(now_id)
-          i_id = k
-       end
-    end
 
-    h = Hash.new
+   fname = @pwd+"/"+Change_log
+
+   for i in 0..@commitFileList.size-1
+     now_id = @gSpace.getCommitID( i )
+     Dir.chdir( @repo[i] )
+     commitLineList = Array.new
+     fr = open( @commitFileList[i], "r" )
+     fr.each { |line|
+       commitLineList << (line.chomp).strip
+     }
+     fr.close
+     i_id = commitLineList.size
+     for k in 0..commitLineList.size-1
+       if commitLineList[k].include?(now_id)
+         i_id = k
+       end
+     end
+
+     h = Hash.new
 
      for ii in 0..i_id-1
        j = i_id-1-ii
@@ -167,20 +170,20 @@ class Repository
                key = fl[3].strip
                key[0..1] = ""
                if h[ key ] == nil
-                  h[ key ] = "delete"
+                 h[ key ] = "delete"
                else
-                  v = h[ key ]
-                  h[ key ] = v+",delete"
+                 v = h[ key ]
+                 h[ key ] = v+",delete"
                end
              else
                fl = (ld[k].chomp).split(" ")
                key = fl[3].strip
                key[0..1] = ""
                if h[ key ] == nil
-                  h[ key ] = "replace"
+                 h[ key ] = "replace"
                else
-                  v = h[ key ]
-                  h[ key ] = v+",replace"
+                 v = h[ key ]
+                 h[ key ] = v+",replace"
                end
              end
            else
@@ -200,16 +203,17 @@ class Repository
        @gSpace.setCommitID( i, commitLineList[j] )
      end
 
-    Dir.chdir( @pwd )
-    fname = @pwd+"/"+Change_log
-    fw = open( fname, "a" )
-    h.each { |key,value|
-      fw.puts @repo[i]+"/"+key + " : " + value
-      puts key + " : " + value
-    }
-    fw.close
-  end
+     writeChangeLog( fname, @repo[i], h )
+   end
+ end
 
+ def writeChangeLog( filename, rdir, hash )
+   Dir.chdir( @pwd )
+   fw = open( filename, "a" )
+   hash.each { |key,value|
+     fw.puts rdir+"/"+key + " : " + value
+   }
+   fw.close
  end
 
 end

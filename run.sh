@@ -2,5 +2,6 @@
 
 export RUBYLIB=.:$RUBYLIB
 
-ruby main.rb
-#./clean.sh
+ruby main.rb >& i.out
+./clean.sh
+

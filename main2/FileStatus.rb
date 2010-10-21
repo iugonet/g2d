@@ -2,28 +2,28 @@
 
 require 'fileutils'
 
-class ActionState
+class FileStatus
 
- Change_log = "Change.log"
-
+ Change_log         = "Change.log"
 
  def initialize( pwd )
    @pwd = pwd
-   @changeList = Array.new
+ end
 
-   f = pwd + "/" + Change_log
-   fr = open( f, "r" )
+ def readChangeLog
+   @changeList = Array.new
+   filename = @pwd + "/" + Change_log
+   fr = open( filename, "r" )
    fr.each { |line|
      @changeList << (line.chomp).strip
    }
    fr.close
-
+ end
+ 
+ def split
    @addList     = Array.new
    @replaceList = Array.new
    @deleteList  = Array.new
- end
- 
- def sift
    for i in 0..@changeList.size-1
      fl = @changeList[i].split(":")
      fa = (fl[1].strip).split(",")
@@ -75,16 +75,15 @@ class ActionState
 
  def test
   puts "add: "
-  for i in 0..@addList.size-1
-    puts @addList[i]
-  end
+  putsList( @addList )
   puts "replace: "
-  for i in 0..@replaceList.size-1
-    puts @replaceList[i]
-  end
+  putsList( @replaceList )
   puts "delete: "
-  for i in 0..@deleteList.size-1
-    puts @deleteList[i]
-  end
+  putsList( @deleteList )
+ end
+ def putsList( list )
+   for i in 0..list.size-1
+     puts list[i]
+   end
  end
 end

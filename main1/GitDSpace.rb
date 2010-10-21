@@ -114,10 +114,12 @@ class GitDSpace
  end
 
  def writeStruct( addList )
-   hid = HandleIDList.new( @structureHandleFile )
-   hid.add( addList )
-   hid.write
-   hid.checkOverlap
+   if addList != nil && addList.size > 0
+     hid = HandleIDList.new( @structureHandleFile )
+     hid.add( addList )
+     hid.write
+     hid.checkOverlap
+   end
  end
 
  def getCommitID( i )
@@ -163,10 +165,12 @@ class GitDSpace
  end
 
  def setHandleID( addList )
-   hid = HandleIDList.new( @itemHandleFile )
-   hid.add( addList )
-   hid.write
-   hid.checkOverlap
+   if addList != nil && addList.size > 0
+     hid = HandleIDList.new( @itemHandleFile )
+     hid.add( addList )
+     hid.write
+     hid.checkOverlap
+   end
  end
 
  def getLineList( filename )
@@ -177,6 +181,121 @@ class GitDSpace
    }
    fr.close
    return lineList
+ end
+
+ def getDeleteStructureList( deleteDirList )
+   deleteList = Array.new
+   hList = getLineList( @itemHandleFile )
+   for i in 0..deleteDirList.size-1
+     del = true
+     for j in 0..hList.size-1
+       if hList[j].include?(deleteDirList[i])
+         del = false
+         break
+       end
+     end
+     if del
+       deleteList << deleteDirList[i]
+     end
+   end
+   return deleteList
+ end
+
+ def deleteCollection( dir )
+
+   hList = getLineList( @structureHandleFile )
+
+   collection_id = ""
+   for i in 0..hList.size-1
+      la = hList[i].split(" ")
+      if la[0] == dir && la[2] == "col"
+        collection_id = la[1]
+        break
+      end
+   end
+
+   parent_id = ""
+   if collection_id.size > 0
+     parent = File.dirname( dir )
+     for i in 0..hList.size-1
+       la = hList[i].split(" ")
+       if la[0] == parent && la[2] == "com"
+         parent_id = la[1]
+         break
+       end
+     end
+   end
+
+   if parent_id.size > 0 || collection_id.size > 0
+     if parent_id.size > 0 && collection_id.size > 0
+     else
+       puts "Error: " + pa
+       exit
+     end
+   end
+
+   return parent_id, collection_id
+ end
+
+ def deleteCommunity( dir )
+   hList = getLineList( @structureHandleFile )
+
+   community_id = ""
+   child = false
+   for i in 0..hList.size-1
+     la = hList[i].split(" ")
+     if la[0].include?( dir ) && la[0].size > dir.size
+       child = true
+       break
+     else
+       if la[0] == dir && la[2] == "com"
+         community_id = la[1]
+       end
+     end
+   end
+
+   if child
+     community_id = ""
+   end
+
+   return community_id
+ end
+
+ def deleteStructure( dir )
+
+   community_id, collection_id = deleteCollection( dir )
+
+   if community_id.size > 0 && collection_id.size > 0
+     puts "delete: " + community_id + " " + collection_id
+     deleteStructureID( collection_id )
+     return community_id, collection_id
+   end
+
+   community_id = deleteCommunity( dir )
+   if community_id.size > 0
+     deleteStructureID( community_id )
+     return community_id, ""
+   end
+   return "", ""
+ end
+
+ def deleteStructureID( handleID )
+   hList = getLineList( @structureHandleFile )
+   for i in 0..hList.size-1
+     la = hList[i].split(" ")
+     if la[1] == handleID
+       puts "Delete: " + hList[i]
+       hList.delete_at(i)
+       break
+     end
+   end
+
+   fw = open( @structureHandleFile, "w" )
+   for i in 0..hList.size-1
+     fw.puts hList[i]
+   end
+   fw.close
+   
  end
 
 end

@@ -48,4 +48,18 @@ class DSpace
     return str
   end
 
+  def getDeleteCollectionCommand( community_handle_id,
+                                  delete_collection_handle_id )
+    str = sprintf( "%s -e %s -f dummyfile_in -o dummyfile_out -h %s -d %s",
+                   @structurebuilder_path, @email,
+                   community_handle_id, delete_collection_handle_id )
+    return str
+  end
+
+  def getDeleteCommunityCommand( delete_community_handle_id )
+    str = sprintf( "%s -e %s -f dummyfile_in -o dummyfile_out -d %s",
+                   @structurebuilder_path, @email,
+                   delete_community_handle_id)
+  end
+
 end

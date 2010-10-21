@@ -12,26 +12,26 @@ class StructBuilder
  OUT_filename = "ost%05d.xml"
 
  def initialize( pwd, workDir, gSpace )
-  @pwd = pwd
-  @workDir = workDir
-  @gSpace = gSpace
+   @pwd = pwd
+   @workDir = workDir
+   @gSpace = gSpace
 
-  @ds = DSpace.new( @pwd )
+   @ds = DSpace.new( @pwd )
 
-  readStruct()
-  setStruct()
+   readStruct()
+   setStruct()
  end
 
  def readStruct()
    @stList = @gSpace.readStruct()
  end
 
- def writeStruct( base, nameList, handleList )
+ def writeStruct( baseDir, nameList, handleList, typeList )
    addList = Array.new
-   dstr = base
+   dstr = baseDir
    for i in 0..nameList.size-1
      dstr = dstr + nameList[i]
-     str = dstr + " " + handleList[i]
+     str = dstr + " " + handleList[i] + " " + typeList[i]
      addList << str
      dstr = dstr + "/"
    end
@@ -39,136 +39,141 @@ class StructBuilder
  end
 
  def setStruct
-  @stDirList = Array.new
-  @stHandleList = Array.new
-  for i in 0..@stList.size-1
-    la = @stList[i].split(" ")
-    if la.length == 2
-      @stDirList    << la[0].strip
-      @stHandleList << la[1].strip
-    else
-      puts "Error"
-      exit
-    end
-  end
+   @stDirList = Array.new
+   @stHandleList = Array.new
+   @stTypeList = Array.new
+   for i in 0..@stList.size-1
+     la = @stList[i].split(" ")
+     if la.length == 3
+       @stDirList    << la[0].strip
+       @stHandleList << la[1].strip
+       @stTypeList   << la[2].strip
+     else
+       puts "Error"
+       exit
+     end
+   end
  end
 
- def setRepoDirList( repoDirList )
-   @repoDirList = repoDirList
+ def setFileList( fileList )
+   @dirList = getDirList( fileList )
+   @newList = getNewList
  end
 
- def setFileList( addList )
-   @addList = addList
-   @dirList = Array.new
+ def getDirList( addList )
+   dirList = Array.new
+   for i in 0..addList.size-1
+     dirList << File.dirname( addList[i].getRelative )
+   end
+   dirList.uniq!
+   dirList.sort!
+   return dirList
+ end
 
-
-   for i in 0..@addList.size-1
-     dir = File.dirname( @addList[i] )
-
-     for j in 0..@repoDirList.size-1
-       repository = @repoDirList[j]
-       newRepositoryName = File.basename(repository,".git")
-       repositoryDir     = File.dirname(repository)
-       newRepositoryDir  = repositoryDir.gsub(/[\/]/,'_')
-       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
-       if dir.include?( repositoryAbsolutePath )
-         len = repositoryAbsolutePath.length
-         dir.slice!(0,len+1)
+ def getNewList()
+   newList = Array.new
+   for i in 0..@dirList.size-1
+     newadd = true
+     for j in 0..@stDirList.size-1
+       if @dirList[i] == @stDirList[j]
+         newadd = false
+         break
        end
      end
-     @dirList << dir
+     if newadd
+       newList << @dirList[i]
+     end
    end
-   @dirList.uniq!
-   @dirList.sort!
-
-   @newList = Array.new
-   for i in 0..@dirList.size-1
-      adding = true
-      for j in 0..@stDirList.size-1
-         if @dirList[i] == @stDirList[j]
-             adding = false
-             break
-         end
-      end
-      if adding
-         @newList << @dirList[i]
-      end
-   end
-
+   return newList
  end
 
  def build
 
-  for i in 0..@newList.size-1
-    la = @newList[i].split("/")
-    jj = -1
-    ha = ""
-    d = ""
-    for j in 0..la.size-1
-       d = d + la[j]
-       for k in 0..@stDirList.size-1
-          if d == @stDirList[k]
-             jj = j
-             ha = @stHandleList[k]
-             break
-          end
-       end
-       d = d + "/"
-    end
+   for i in 0..@newList.size-1
+     la = @newList[i].split("/")
 
-    base = ""
-    for j in 0..jj
-      base = base + la[j]
-      base = base + "/"
-    end
-    type = "collection"
-    fni = sprintf( IN_filename, i )
-    fno = sprintf( OUT_filename, i )
-    fw = writeInit( fni )
-    for k in jj+1..la.size-2
-      writeCommunity( fw, la[k], la[k] )
-      type = "community"
-    end
-    writeCollection( fw, la[la.size-1], la[la.size-1] )
-    for k in jj+1..la.size-2
-       writeCommunityEnd( fw )
-    end
-    writeFinalize( fw )
+     depth, handleID = getTopDir( la )
+     if handleID == ""
+       handleID = "null"
+     end
+     baseDir = getBaseDir( la, depth )
 
-    if ha == ""
-       ha = "null"
-    end
+     fni = sprintf( IN_filename, i )
+     fno = sprintf( OUT_filename, i )
+     type = writeInputFile( fni, depth, la )
+     cstr = @ds.getStructureBuilderCommand( fni, fno, handleID, type )
+     system( cstr )
 
-    cstr = @ds.getStructureBuilderCommand( fni, fno, ha, type )
-    system( cstr )
+     nameList = Array.new
+     handleList = Array.new
+     typeList = Array.new
+     readLog( fno, nameList, handleList, typeList )
+     writeStruct( baseDir, nameList, handleList, typeList )
 
-    nameList = Array.new
-    handleList = Array.new
-    readLog( fno, nameList, handleList )
-    writeStruct( base, nameList, handleList )
-
-    readStruct()
-    setStruct()
-  end
-
+     readStruct()
+     setStruct()
+   end
  end
 
- def readLog( fno, nameList, handleList )
+ def getTopDir( dl )
+   depth = -1
+   handleID = ""
+   tdir = ""
+   for j in 0..dl.size-1
+     tdir = tdir + dl[j]
+     for k in 0..@stDirList.size-1
+       if tdir == @stDirList[k]
+         depth = j
+         handleID = @stHandleList[k]
+         break
+       end
+     end
+     tdir = tdir + "/"
+   end
+   return depth, handleID
+ end
+
+ def getBaseDir( dl, depth )
+   basedir = ""
+   for i in 0..depth
+     basedir = basedir + dl[i] + "/"
+   end
+   return basedir
+ end
+
+ def writeInputFile( filename, depth, dl )
+   type = "collection"
+   fw = writeInit( filename )
+   for i in depth+1..dl.size-2
+     writeCommunity( fw, dl[i], dl[i] )
+     type = "community"
+   end
+   writeCollection( fw, dl[dl.size-1], dl[dl.size-1] )
+   for i in depth+1..dl.size-2
+     writeCommunityEnd( fw )
+   end
+   writeFinalize( fw )
+   return type
+ end
+
+ def readLog( fno, nameList, handleList, typeList )
    fr = open( fno, "r" )
    doc = REXML::Document.new fr
    doc.elements.each("imported_structure"){|is|
-     scanID( is, nameList, handleList )
+     scanID( is, nameList, handleList, typeList )
    }
    fr.close
  end
 
- def scanID( elem, nameList, handleList )
+ def scanID( elem, nameList, handleList, typeList )
    elem.elements.each("collection"){|col|
+     typeList << "col"
      getID( col, nameList, handleList )
    }
    elem.elements.each("community"){|com|
+     typeList << "com"
      getID( com, nameList, handleList )
-     scanID( com, nameList, handleList )
+     scanID( com, nameList, handleList, typeList )
    }
  end
 

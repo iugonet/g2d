@@ -2,6 +2,7 @@
 require 'fileutils'
 require 'tempfile'
 
+require 'main2/FileList'
 require 'main2/Spase2DSpace'
 require 'main2/DSpace'
 require 'util/ScriptMaker'
@@ -15,56 +16,39 @@ class ItemDelete
   @pwd = pwd
   @workDir = workDir
   @gSpace = gSpace
-
-  @ds = DSpace.new( @pwd )
  end
 
- def setFileList( deleteList )
-   @deleteList = deleteList
+ def setFileList( fileList )
+    @fileList = fileList
  end
- def setRepoDirList( repoDirList )
-   @repoDirList = repoDirList
- end
- 
+
  def make()
-   frf = @pwd + "/" + Runfile
-   sm = ScriptMaker.new( frf )
+   tempDir = @pwd + "/" + TempDir
+   Dir.mkdir( tempDir )
+   mapfile = tempDir + "/mapfile"
+   logfile = tempDir + "/logfile"
+   lm = open( logfile, "w" )
 
-   tdir = @pwd + "/" + TempDir
-   Dir.mkdir( tdir )
-   mapfile = tdir + "/mapfile"
    fm = open( mapfile, "w" )
-
-   for i in 0..@deleteList.size-1
-     file = @deleteList[i]
-     dir = File.dirname( file )
-     hdir = File.dirname( file )
-     for j in 0..@repoDirList.size-1
-       repository = @repoDirList[j]
-       newRepositoryName = File.basename(repository,".git")
-       repositoryDir     = File.dirname(repository)
-       newRepositoryDir = repositoryDir.gsub(/[\/]/,'_')
-       repositoryAbsolutePath = @pwd + "/" + @workDir + "/" + newRepositoryDir + "/" + newRepositoryName
-       if  hdir.include?( repositoryAbsolutePath )
-         len = repositoryAbsolutePath.length
-         hdir.slice!(0,len+1)
-         break
-       end
-     end
-     llen = @deleteList[i].size
-     fgl = @deleteList[i].slice(repositoryAbsolutePath.length+1,llen-1)
-     id = @gSpace.getHandleID( fgl )
+   for i in 0..@fileList.size-1
+     filename = @fileList[i].getRelative
+     lm.printf("%s\n", filename )
+     id = @gSpace.getHandleID( filename )
      fm.printf("%d %s\n", i+1, id )
-     @gSpace.deleteHandleID2( fgl, id )
+     @gSpace.deleteHandleID2( filename, id )
    end
    fm.close
+   lm.close
 
-   if @deleteList.size > 0
-     cstr = @ds.getDeleteCommand( mapfile )
+   frf = @pwd + "/" + Runfile
+   sm = ScriptMaker.new( frf )
+   if @fileList.size > 0
+     ds = DSpace.new( @pwd )
+     cstr = ds.getDeleteCommand( mapfile )
      sm.puts( cstr )
    end
-
    sm.finalize
+
    Dir.chdir( @pwd )
  end
 
@@ -75,7 +59,59 @@ class ItemDelete
    system( com )
  end
 
- def updateMapfile()
+ def checkDirectory()
+   tempDir = @pwd + "/" + TempDir
+   logfile = tempDir + "/logfile"
+   deleteFileList = Array.new
+   lm = open( logfile, "r" )
+   lm.each { |line|
+     deleteFileList << (line.chomp).strip
+   }
+   lm.close
+
+   deleteDirList = Array.new
+   for i in 0..deleteFileList.size-1
+     deleteDirList << File.dirname( deleteFileList[i] )
+   end
+
+   deleteDirList.uniq!
+
+   deleteList = @gSpace.getDeleteStructureList( deleteDirList )  
+
+
+   frf = @pwd + "/runClean.sh"
+   sm = ScriptMaker.new( frf )
+   ds = DSpace.new( @pwd )
+
+   for i in 0..deleteList.size-1
+     dir = deleteList[i].split("/")
+     for j in 0..dir.size-2
+       n = dir.size-1-j
+       dirname = ""
+       for k in 0..n
+         dirname = dirname + dir[k]
+         if k != n
+           dirname = dirname + "/"
+         end
+       end
+       community_id, collection_id = @gSpace.deleteStructure( dirname )
+       if community_id.size > 0 && collection_id.size > 0
+         cstr = ds.getDeleteCollectionCommand( community_id, collection_id )
+         sm.puts( cstr )
+       elsif community_id.size > 0 && collection_id.size == 0
+         cstr = ds.getDeleteCommunityCommand( community_id )
+         sm.puts( cstr )
+       end
+     end
+   end
+   sm.finalize
+ end
+
+ def runClean()
+   Dir.chdir( @pwd )
+   File.chmod( 0755, "runClean.sh" )
+   com = sprintf( "./%s", "runClean.sh" )
+   system( com )
  end
 
 end
