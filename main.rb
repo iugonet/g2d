@@ -29,6 +29,7 @@ repo.getChangeList
 fileStatus = FileStatus.new( pwd )
 fileStatus.readChangeLog
 fileStatus.split
+fileStatus.writeLog
 
 addList = FileList.new( pwd, repo.getWorkDir )
 addList.setRepositoryList( conf.getRepoDirList )

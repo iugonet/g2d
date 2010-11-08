@@ -4,7 +4,8 @@ require 'fileutils'
 
 class FileStatus
 
- Change_log         = "Change.log"
+ Change_log   = "Change.log"
+ FileStatus_log = "FileStatus.log"
 
  def initialize( pwd )
    @pwd = pwd
@@ -73,17 +74,25 @@ class FileStatus
    return @deleteList
  end
 
- def test
-  puts "add: "
-  putsList( @addList )
-  puts "replace: "
-  putsList( @replaceList )
-  puts "delete: "
-  putsList( @deleteList )
+ def writeLog
+  fw = open( FileStatus_log, "w" )
+  if @addList.size > 0
+    fw.puts "add: "
+    putsList( fw, @addList )
+  end
+  if @replaceList.size > 0
+    fw.puts "replace: "
+    putsList( fw, @replaceList )
+  end
+  if @deleteList.size > 0
+    fw.puts "delete: "
+    putsList( fw, @deleteList )
+  end
+  fw.close
  end
- def putsList( list )
+ def putsList( fw, list )
    for i in 0..list.size-1
-     puts list[i]
+     fw.puts list[i]
    end
  end
 end
