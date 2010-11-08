@@ -15,7 +15,7 @@ pwd = Dir.pwd
 conf = Config.new( pwd )
 
 gSpace = GitDSpace.new( pwd, conf.getRepoList )
-gSpace.gitPull
+gSpace.pull
 gSpace.init
 
 repo = Repository.new( pwd, conf.getRepoList )
@@ -78,3 +78,5 @@ if replaceList.getSize > 0
   item_replace.make
   item_replace.run
 end
+
+#gSpace.push

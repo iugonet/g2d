@@ -1,6 +1,7 @@
 # -*- coding : utf-8 -*-
 
 require 'fileutils'
+require 'date'
 
 require 'main1/Git'
 require 'main1/HandleIDList'
@@ -62,7 +63,7 @@ class GitDSpace
    fr.close
  end
 
- def gitPull
+ def pull
    dir = File.basename( @repoPath, ".git" )
    @repoDir = @gwd+"/"+dir
    if FileTest.exist?( @repoDir )
@@ -72,6 +73,17 @@ class GitDSpace
      Dir.chdir( @gwd )
      system( @git.getCloneCommand( @repoPath ) )
    end
+   Dir.chdir( @pwd )
+ end
+
+ def push
+   t = DateTime.now
+   message = "Updated: " + t.to_s
+   com1, com2, com3 = @git.getPushCommand( message )
+   Dir.chdir( @repoDir )
+   system( com1 )
+   system( com2 )
+   system( com3 )
    Dir.chdir( @pwd )
  end
 
@@ -97,15 +109,6 @@ class GitDSpace
      fr = open( filename, "w" )
      fr.close
    end
- end
-
- def gitPush( message )
-   com1, com2, com3 = @git.getPushCommand( message )
-   Dir.chdir( @repoDir )
-   system( com1 )
-   system( com2 )
-   system( com3 )
-   Dir.chdir( @pwd )
  end
 
  def readStruct()
