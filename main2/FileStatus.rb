@@ -5,7 +5,7 @@ require 'fileutils'
 class FileStatus
 
  Change_log   = "Change.log"
- FileStatus_log = "FileStatus.log"
+ FileStatus_log = "FileStatus.out"
 
  def initialize( pwd )
    @pwd = pwd
