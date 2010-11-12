@@ -2,6 +2,9 @@
 
 export RUBYLIB=.:$RUBYLIB
 
+
+rm -f i.out
+rm -f update.out
 date
 pwd
 
@@ -20,5 +23,5 @@ fi
 
 date
 cp i.out          /opt/dspace/webapps/iugonet/iugonet/.
-cp FileStatus.out /opt/dspace/webapps/iugonet/iugonet/.
+cp update.out     /opt/dspace/webapps/iugonet/iugonet/.
 

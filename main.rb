@@ -34,15 +34,18 @@ fileStatus.writeLog
 addList = FileList.new( pwd, repo.getWorkDir )
 addList.setRepositoryList( conf.getRepoDirList )
 addList.setFileList( fileStatus.getAddList )
-
+addList.write( "Add" )
 
 replaceList = FileList.new( pwd, repo.getWorkDir )
 replaceList.setRepositoryList( conf.getRepoDirList )
 replaceList.setFileList( fileStatus.getReplaceList )
+replaceList.write( "Replace" )
+
 
 deleteList = FileList.new( pwd, repo.getWorkDir )
 deleteList.setRepositoryList( conf.getRepoDirList )
 deleteList.setFileList( fileStatus.getDeleteList )
+deleteList.write( "Delete" )
 
 if deleteList.getSize > 0
   puts "Delete Item"
