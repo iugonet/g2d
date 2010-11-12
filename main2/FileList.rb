@@ -73,7 +73,7 @@ class FileList
  def write( comment )
   fw = open( "update.out", "a" )
   fw.puts "---------- " + comment + " ----------"
-  for i in 0..@list.size
+  for i in 0..@list.size-1
     fw.puts @list[i].getRelative
   end
   fw.puts "-------------------------"
