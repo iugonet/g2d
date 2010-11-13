@@ -78,7 +78,7 @@ class GitDSpace
 
  def push
    t = DateTime.now
-   message = "Updated: " + t.to_s
+   message = "Update: " + t.to_s
    com1, com2, com3 = @git.getPushCommand( message )
    Dir.chdir( @repoDir )
    system( com1 )

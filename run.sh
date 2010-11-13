@@ -10,11 +10,11 @@ echo $IMPORT_PID
 if [ $$ = $IMPORT_PID ]; then
  rm -f update.out
  ruby main.rb >& i.out
- if [ -s FileStatus.out ]; then
+ if [ -s FileStatus.log ]; then
    /opt/dspace/bin/index-update
  fi
  ./clean.sh
- cp update.out     /opt/dspace/webapps/iugonet/iugonet/.
+ cp update.out /opt/dspace/webapps/iugonet/iugonet/.
 else
  echo "PASS"
 fi
