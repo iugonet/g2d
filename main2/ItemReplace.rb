@@ -53,16 +53,26 @@ class ItemReplace
      addList, delIndexList = getAddList( dir )
      deleteList( delIndexList )
 
+     itemIndex = 0
      for i in 0..addList.size-1
+       if i%30000 == 29999
+          cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
+          sm.puts( cstr )
+          tempDir = getTempDir
+          Dir.mkdir( tempDir )
+          mapfile = tempDir + "/mapfile"
+          itemIndex = 0
+       end
+       itemIndex = itemIndex + 1
        afile = addList[i].getAbsolute
        rfile = addList[i].getRelative
-       itemDir = tempDir + "/" + (i+1).to_s
+       itemDir = tempDir + "/" + itemIndex.to_s
        Dir.mkdir( itemDir )
        FileUtils.install( afile, itemDir, :mode=>0644 )
        makeContentsFile( itemDir, afile )
        s2d.conv( afile, itemDir )
 
-       writeMapfile( mapfile, i, rfile )
+       writeMapfile( mapfile, itemIndex, rfile )
      end
 
      cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
@@ -112,7 +122,7 @@ class ItemReplace
  def writeMapfile( mapfile, i, file )
    handleID = @gSpace.getHandleID( file )
    fw = open( mapfile, "a" )
-   fw.printf( "%d %s\n", i+1, handleID )
+   fw.printf( "%d %s\n", i, handleID )
    fw.close
  end
 

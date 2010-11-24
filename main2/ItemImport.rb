@@ -54,15 +54,26 @@ class ItemImport
      addList, delIndexList = getAddList( dir )
      deleteList( delIndexList )
 
+     itemIndex = 0
      for i in 0..addList.size-1
+       if i%30000 == 29999
+          mapfile = tempDir + "/mapfile"
+          cstr = @ds.getImportCommand( handleID, tempDir, mapfile )
+          sm.puts( cstr )
+          tempDir = getTempDir
+          Dir.mkdir( tempDir )
+          logfile = tempDir + "/impfile"
+          itemIndex = 0
+       end
+       itemIndex = itemIndex + 1
        afile = addList[i].getAbsolute
        rfile = addList[i].getRelative
-       itemDir = tempDir + "/" + (i+1).to_s
+       itemDir = tempDir + "/" + itemIndex.to_s
        Dir.mkdir( itemDir )
        FileUtils.install( afile, itemDir, :mode=>0664 )
        makeContentsFile( itemDir, afile )
        s2d.conv( afile, itemDir )
-       writeImportLog( logfile, i, rfile )
+       writeImportLog( logfile, itemIndex, rfile )
      end
 
      mapfile = tempDir + "/mapfile"
