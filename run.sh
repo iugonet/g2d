@@ -2,12 +2,12 @@
 
 export RUBYLIB=.:$RUBYLIB
 
-date
 
 IMPORT_PID=`pgrep -u dspace -o run.sh`
-echo $IMPORT_PID
 
 if [ $$ = $IMPORT_PID ]; then
+ echo $IMPORT_PID > time.out
+ date >> time.out
  rm -f update.out
  ruby main.rb >& i.out
  if [ -s FileStatus.log ]; then
@@ -15,8 +15,8 @@ if [ $$ = $IMPORT_PID ]; then
  fi
  ./clean.sh
  cp update.out /opt/dspace/webapps/iugonet/iugonet/.
+ date >> time.out
 else
  echo "PASS"
 fi
 
-date
