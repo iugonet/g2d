@@ -355,7 +355,7 @@ class Spase2DSpace
    fw = open( f, "w")
    fw.puts "<dublin_core schema=\"" + OutSchema + "\">"
    fn = File.basename( filename )
-   write( fw, "filename", nil, fn )
+   write( fw, "Filename", nil, fn )
 
    resourceid = ""
    fr = open( filename, "r" )

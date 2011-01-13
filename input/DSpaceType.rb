@@ -162,7 +162,7 @@ class DSpaceType
       end
    end
 
-   writeType( fw, OutSchema, "filename",     nil, nil )
+   writeType( fw, OutSchema, "Filename",     nil, nil )
    writeType( fw, OutSchema, "ResourceID",   nil, nil )
    writeType( fw, OutSchema, "ResourceType", nil, nil )
 

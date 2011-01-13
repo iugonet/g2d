@@ -89,7 +89,7 @@ class DSpaceType
    for i in 0..@elementList.size-1
       writeValue( fw, $outSchema, @elementList[i], @qualifierList[i] )
    end
-   fw.printf("%s.%s\n", $outSchema, "filename" )
+   fw.printf("%s.%s\n", $outSchema, "Filename" )
    fw.close
 
    puts "write: itemdisplay.conf"

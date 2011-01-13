@@ -1761,7 +1761,7 @@
 
   <dc-type>
     <schema>iugonet</schema>
-    <element>filename</element>
+    <element>Filename</element>
   </dc-type>
 
   <dc-type>

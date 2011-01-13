@@ -75,7 +75,7 @@ class DSpaceType
    for i in 0..@elementList.size-1
       writeValue( fw, $outSchema, @elementList[i], @qualifierList[i], @noteList[i] )
    end
-   fw.printf("metadata.%s.%s = %s\n", $outSchema, "filename", "filename" )
+   fw.printf("metadata.%s.%s = %s\n", $outSchema, "Filename", "Filename" )
    fw.close
 
    puts "write: message.properties"
