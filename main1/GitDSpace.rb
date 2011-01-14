@@ -172,7 +172,6 @@ class GitDSpace
      hid = HandleIDList.new( @itemHandleFile )
      hid.add( addList )
      hid.write
-     hid.checkOverlap
    end
  end
 
