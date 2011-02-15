@@ -3,6 +3,8 @@ $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
 $ ResourceHeader Acknowledgement
+$ ResourceHeader Contact PersonID
+$ ResourceHeader Contact Role
 $ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Acknowledgement
@@ -15,6 +17,8 @@ $ ResourceID
 $ ResourceHeader ResourceName
 $ ResourceHeader Description
 $ ResourceHeader Acknowledgement
+$ ResourceHeader Contact PersonID
+$ ResourceHeader Contact Role
 $ AccessInformation RepositoryID
 $ AccessInformation AccessURL URL
 $ AccessInformation Acknowledgement

@@ -621,6 +621,18 @@
   <dc-type>
     <schema>iugonet</schema>
     <element>Catalog</element>
+    <qualifier>ResourceHeaderContactPersonID</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Catalog</element>
+    <qualifier>ResourceHeaderContactRole</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>Catalog</element>
     <qualifier>AccessInformationRepositoryID</qualifier>
   </dc-type>
 
@@ -705,6 +717,18 @@
     <schema>iugonet</schema>
     <element>DisplayData</element>
     <qualifier>ResourceHeaderAcknowledgement</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>DisplayData</element>
+    <qualifier>ResourceHeaderContactPersonID</qualifier>
+  </dc-type>
+
+  <dc-type>
+    <schema>iugonet</schema>
+    <element>DisplayData</element>
+    <qualifier>ResourceHeaderContactRole</qualifier>
   </dc-type>
 
   <dc-type>
