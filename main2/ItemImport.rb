@@ -147,8 +147,25 @@ class ItemImport
        puts "Error: " + name
        exit
      end
-     for i in 0..ml.size-1
-       mll = (ml[i].chomp).split(" ")
+
+     mlla = Array.new
+     for i in 0..pl.size-1
+        pll = (pl[i].chomp).split(" ")
+        jj = 0
+        while ml.size > 0
+          mll = (ml[jj].chomp).split(" ")
+          if pll[0] == mll[0]
+            mlla << ml[jj]
+            ml.delete_at(jj)
+            break
+          else
+            jj = jj + 1
+          end
+        end
+     end
+
+     for i in 0..mlla.size-1
+       mll = (mlla[i].chomp).split(" ")
        pll = (pl[i].chomp).split(" ")
        newList << sprintf("%s %s", pll[1], mll[1] )
      end
