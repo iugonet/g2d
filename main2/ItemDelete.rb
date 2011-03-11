@@ -6,6 +6,7 @@ require 'main2/FileList'
 require 'main2/Spase2DSpace'
 require 'main2/DSpace'
 require 'util/ScriptMaker'
+require 'main1/HandleID'
 
 class ItemDelete
 
@@ -29,16 +30,22 @@ class ItemDelete
    logfile = tempDir + "/logfile"
    lm = open( logfile, "w" )
 
+   delList = Array.new
+   hid = HandleID.new( @gSpace.getItemHandleFile )
+   hid.read
+
    fm = open( mapfile, "w" )
    for i in 0..@fileList.size-1
      filename = @fileList[i].getRelative
+     id, n = hid.getID( filename )
      lm.printf("%s\n", filename )
-     id = @gSpace.getHandleID( filename )
      fm.printf("%d %s\n", i+1, id )
-     @gSpace.deleteHandleID2( filename, id )
+     delList << n
    end
    fm.close
    lm.close
+   hid.delete( delList )
+   hid.write
 
    frf = @pwd + "/" + Runfile
    sm = ScriptMaker.new( frf )

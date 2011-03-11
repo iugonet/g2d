@@ -104,6 +104,13 @@ class GitDSpace
    @structureHandleFile = sf
  end
 
+ def getItemHandleFile
+   return @itemHandleFile
+ end
+ def getStructureHandleFile
+   return @structureHandleFile
+ end
+
  def initFile( filename )
    if !FileTest.exist?( filename )
      fr = open( filename, "w" )
