@@ -14,7 +14,11 @@ if [ $$ = $IMPORT_PID ]; then
    /opt/dspace/bin/index-update
  fi
  ./clean.sh
- cp update.out /opt/dspace/webapps/iugonet/iugonet/.
+ if [ -s update.out ]; then
+   cp update.out /opt/dspace/webapps/iugonet/iugonet/.
+   ruby util/ulist.rb
+   cp update_list.html /opt/dspace/webapps/iugonet/iugonet/.
+ fi
  date >> time.out
 else
  echo "PASS"
