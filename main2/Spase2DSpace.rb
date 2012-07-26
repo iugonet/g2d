@@ -88,6 +88,7 @@ class Spase2DSpace
      end
    }
    fr.close
+
  end
 
  def checkLength
@@ -367,41 +368,102 @@ class Spase2DSpace
    write( fw, "ResourceID", nil, resourceid )
    write( fw, "ResourceType", nil, resourcetype )
 
+   #### START: ADD by N.UMEMURA, 20120621 ####
+   readxml(doc.root, fw)
+   #### END: ADD by N.UMEMURA, 20120621 ####
 
-   for i in 0..@queryList.size-1
-     if @queryList[i] != nil
-       doc.elements.each(@queryList[i]){|data|
-       if data.text != nil
-         write( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
-         if @qualifierList[i].include?("StartDate") ||
-            @qualifierList[i].include?("StopDate")
-           res = writeDateTime( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
-         elsif @qualifierList[i].include?("LocationLatitude")
-           writeLocationLatitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
-         elsif @qualifierList[i].include?("LocationLongitude")
-           writeLocationLongitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
-         elsif @qualifierList[i].include?("NorthernmostLatitude") ||
-                 @qualifierList[i].include?("SouthernmostLatitude")
-           res = writeSpatialCoverageLatitude( fw, @elementList[i], @qualifierList[i], trxml(data.text) )
-         elsif @qualifierList[i].include?("WesternmostLongitude") ||
-               @qualifierList[i].include?("EasternmostLongitude")
-            if @qualifierList[i].include?("WesternmostLongitude")
-              setSpatialCoverageWesternmostLongitude( @elementList[i], @qualifierList[i], trxml(data.text) )
-            elsif @qualifierList[i].include?("EasternmostLongitude")
-              setSpatialCoverageEasternmostLongitude( @elementList[i], @qualifierList[i], trxml(data.text) )
-            end
-            if @wl && @el
-              setSpatialCoverageLongitude( fw )
-            end
-         end
-       end
-       }
-     end
-   end
    fw.puts "</dublin_core>"
    fw.close
    fr.close
    
  end
+
+ ## ------------------------------------------------------------------------- ##
+ ##   START: ADD by N.UMEMURA, 20120621                                       ##
+ ## ------------------------------------------------------------------------- ##
+ def readxml(elem, fw)
+
+   # Debug
+#  puts "-------- function readxml --------"
+
+   # Get Text (Element Value)
+   text = elem.text
+
+   # Get XML Parameters
+   if text != nil && text != ""
+
+     # Get XPath
+     xpath = (elem.xpath).gsub(/\[[0-9]*\]/, "")
+#    puts "XPath     = [#{xpath}]"
+
+     # Get 2nd Element (root's child)
+     elms = xpath.split(QualifierQuerySeparator)
+     parentElm = elms[2]
+#    puts "parentElm = [#{parentElm}]"
+
+     # Get Qualifier (for DSpace)
+     qualifier = xpath.gsub(/\[[0-9]*\]/, "")
+     qualifier = qualifier.gsub(/^\/[a-z]*/i, "")  # Delete Root Element ("/Spase")
+     qualifier = qualifier.gsub(/^\/[a-z]*/i, "")  # Detele 2nd Element (ex. "/NumericalData")
+     qualifier = qualifier.gsub(QualifierQuerySeparator, "")
+#    puts "qualifier = [#{qualifier}]"
+
+     # Get Element Name
+#    puts "element   = [#{elem.name}]"
+
+     # Get Attributes (option)
+#    attrs = elem.attributes
+#    attrs.each{|a,e|
+#      puts "attrname  = [#{a}]"
+#      puts "attrvalue = [#{e}]"
+#    }
+
+     # Write
+     if qualifier != nil && qualifier != ""
+
+       # Matching
+       if @queryList.include?(xpath[1, xpath.length]) == true
+
+         # Write
+         write(fw, parentElm, qualifier, trxml(text))
+
+         # Add Time Range (Existing Logic)
+         if qualifier.include?("StartDate") || qualifier.include?("StopDate")
+           res = writeDateTime(fw, parentElm, qualifier, trxml(text))
+         # Add Location Range (Existing Logic)
+         elsif qualifier.include?("LocationLatitude")
+           writeLocationLatitude(fw, parentElm, qualifier, trxml(text))
+         elsif qualifier.include?("LocationLongitude")
+           writeLocationLongitude(fw, parentElm, qualifier, trxml(text))
+         elsif qualifier.include?("NorthernmostLatitude") || qualifier.include?("SouthernmostLatitude")
+           res = writeSpatialCoverageLatitude(fw, parentElm, qualifier, trxml(text))
+         elsif qualifier.include?("WesternmostLongitude") || qualifier.include?("EasternmostLongitude")
+           if qualifier.include?("WesternmostLongitude")
+             setSpatialCoverageWesternmostLongitude(parentElm, qualifier, trxml(text))
+           elsif qualifier.include?("EasternmostLongitude")
+             setSpatialCoverageEasternmostLongitude(parentElm, qualifier, trxml(text))
+           end
+           if @wl && @el
+             setSpatialCoverageLongitude(fw)
+           end
+         end
+
+       end
+
+     end
+
+   end
+
+   # If element has child...
+   if elem.has_elements? then
+     elem.each_element{|elemchild|
+       readxml(elemchild, fw)
+     }
+   end
+
+ end
+ ## ------------------------------------------------------------------------- ##
+ ##   END: ADD by N.UMEMURA, 20120726                                         ##
+ ## ------------------------------------------------------------------------- ##
 
 end
