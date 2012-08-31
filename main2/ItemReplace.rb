@@ -36,11 +36,14 @@ class ItemReplace
 
  def make()
 
+<<<<<<< HEAD
    # Temporary Code
    tmp_checker = "test_umemura/test/PrintDate.sh"
    tmp_command = tmp_checker + " -m "
 
    system(tmp_command + "Trace-001-001")   # Trace
+=======
+>>>>>>> mod_handleidHASH_201208
    frf = @pwd + "/" + Runfile
 
    system(tmp_command + "Trace-001-002")   # Trace
@@ -74,12 +77,16 @@ class ItemReplace
 
      system(tmp_command + "Trace-003-005")     # Trace
      dir = File.dirname( @fileList[0].getRelative )
+<<<<<<< HEAD
 
 #    puts "dir = [#{dir}]"     # Debug
 
      system(tmp_command + "Trace-003-006")     # Trace
      handleID = @stHash[ dir ]
 #    puts "handleID = [#{handleID}]"     # Debug (Collection's HandleID)
+=======
+     handleID = @stHash[ dir ]   ## Collection's Handle
+>>>>>>> mod_handleidHASH_201208
 
      system(tmp_command + "Trace-003-007")     # Trace
 
@@ -89,9 +96,16 @@ class ItemReplace
      system(tmp_command + "Trace-003-009")     # Trace
      deleteList( delIndexList )
 
+<<<<<<< HEAD
      system(tmp_command + "Trace-003-010")     # Trace
 
      system(tmp_command + "Trace-004-001")     # Trace
+=======
+     ######## START: ADD by STEL N.UMEMURA, 20120823 ########
+     hashHandleID = @gSpace.createHandleIDHASH
+     ######## END  : ADD by STEL N.UMEMURA, 20120823 ########
+
+>>>>>>> mod_handleidHASH_201208
      itemIndex = 0
 
      system(tmp_command + "Trace-004-002-A")     # Trace
@@ -158,6 +172,7 @@ class ItemReplace
        system(tmp_command + "Trace-004-018")       # Trace
        s2d.conv( afile, itemDir )
 
+<<<<<<< HEAD
        system(tmp_command + "Trace-004-019-A")       # Trace
 
        ######## START: ADD by STEL, N.UMEMURA ########
@@ -171,6 +186,17 @@ class ItemReplace
 #      writeMapfile( mapfile, itemIndex, rfile )   ### TOO LATE!!!
 
        system(tmp_command + "Trace-004-020")       # Trace
+=======
+       ######## START: ADD by STEL N.UMEMURA, 20120823 ########
+       handleIDMD = hashHandleID[rfile]        ## Metadata's HandleID
+#      puts "handleIDMD = [#{handleIDMD}]"
+       ######## END  : ADD by STEL N.UMEMURA, 20120823 ########
+
+       ######## START: MOD by STEL N.UMEMURA, 20120823 ########
+#      writeMapfile( mapfile, itemIndex, rfile )
+       writeMapfile2( mapfile, itemIndex, rfile, handleIDMD )
+       ######## END  : MOD by STEL, N.UMEMURA 20120823 ########
+>>>>>>> mod_handleidHASH_201208
 
      end
 
@@ -268,6 +294,7 @@ class ItemReplace
 
  end
 
+<<<<<<< HEAD
  def writeMapfile2( mapfile, i, file, handleID )
 
    # Temporary Code
@@ -289,6 +316,15 @@ class ItemReplace
    system(tmp_command + "Trace-101-005")   # Trace
 
  end
+=======
+ ######## START: ADD by STEL N.UMEMURA, 20120823 ########
+ def writeMapfile2( mapfile, i, file, handleID )
+   fw = open( mapfile, "a" )
+   fw.printf( "%d %s\n", i, handleID )
+   fw.close
+ end
+ ######## END  : ADD by STEL N.UMEMURA, 20120823 ########
+>>>>>>> mod_handleidHASH_201208
 
  def run
    Dir.chdir( @pwd )

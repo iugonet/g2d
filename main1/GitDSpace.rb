@@ -164,6 +164,7 @@ class GitDSpace
    hid.write
  end
 
+<<<<<<< HEAD
  ######## START: ADD by STEL, N.UMEMURA ########
  def createHandleIDHASH()
 
@@ -178,6 +179,14 @@ class GitDSpace
 
    system(tmp_command + "Trace-302-002")   # Trace
 
+=======
+ ######## START: ADD by STEL N.UMEMURA, 20120823 ########
+ def createHandleIDHASH()
+
+   # Define
+   hashHandleID = Hash.new
+
+>>>>>>> mod_handleidHASH_201208
    # Create HASH
    fr = open(@itemHandleFile, "r")
    fr.each{ |line|
@@ -186,13 +195,20 @@ class GitDSpace
    }
    fr.close
 
+<<<<<<< HEAD
    system(tmp_command + "Trace-302-003")   # Trace
 
+=======
+>>>>>>> mod_handleidHASH_201208
    # Return
    return hashHandleID
 
  end 
+<<<<<<< HEAD
  ######## END: ADD by STEL, N.UMEMURA   ########
+=======
+ ######## END: ADD by STEL N.UMEMURA, 20120823 ########
+>>>>>>> mod_handleidHASH_201208
 
  def getHandleID( file )
 
