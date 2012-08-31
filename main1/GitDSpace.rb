@@ -68,10 +68,10 @@ class GitDSpace
    @repoDir = @gwd+"/"+dir
    if FileTest.exist?( @repoDir )
      Dir.chdir( @repoDir )
-     system( @git.getPullCommand() )
+#    system( @git.getPullCommand() )
    else
      Dir.chdir( @gwd )
-     system( @git.getCloneCommand( @repoPath ) )
+#    system( @git.getCloneCommand( @repoPath ) )
    end
    Dir.chdir( @pwd )
  end
@@ -164,14 +164,66 @@ class GitDSpace
    hid.write
  end
 
+ ######## START: ADD by STEL, N.UMEMURA ########
+ def createHandleIDHASH()
+
+   # Temporary Code                                                                                      
+   tmp_checker = "test_umemura/test/PrintDate.sh"
+   tmp_command = tmp_checker + " -m "
+
+   system(tmp_command + "Trace-302-001")   # Trace
+
+   # Define
+   hashHandleID = Hash.new
+
+   system(tmp_command + "Trace-302-002")   # Trace
+
+   # Create HASH
+   fr = open(@itemHandleFile, "r")
+   fr.each{ |line|
+     il = (line.chomp).split(" ")
+     hashHandleID[il[0].strip] = il[1].strip
+   }
+   fr.close
+
+   system(tmp_command + "Trace-302-003")   # Trace
+
+   # Return
+   return hashHandleID
+
+ end 
+ ######## END: ADD by STEL, N.UMEMURA   ########
+
  def getHandleID( file )
-   hList = getLineList( @itemHandleFile )
+
+   # Temporary Code                                                                                      
+   tmp_checker = "test_umemura/test/PrintDate.sh"
+   tmp_command = tmp_checker + " -m "
+
+   system(tmp_command + "Trace-301-001")   # Trace
+
+#  puts("file = [" + file + "]")   # Debug
+
+   # Temporary Code                                                                                      
+   file = "IUGONET/NumericalData/STEL/EISCAT/TRO/UHF/1min_ascii99.xml"
+
+   hList = getLineList( @itemHandleFile )  ### TO LATE!!! (About 10[sec])
+
+   system(tmp_command + "Trace-301-002")   # Trace
+
+   ### TO LATE!!! (About 11-12[sec])
    for i in 0..hList.size-1
      il = hList[i].split(" ")
+#    puts(il[0])     # Debug
      if il[0] == file
+        system(tmp_command + "Trace-301-003")        # Trace
+#       puts(il[1])        # Debug
         return il[1]
      end
    end
+
+   system(tmp_command + "Trace-301-004")   # Trace
+
  end
 
  def setHandleID( addList )
