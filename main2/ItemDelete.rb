@@ -13,6 +13,10 @@ class ItemDelete
  TempDir = "DeleteData"
  Runfile = "runDelete.sh"
 
+ # Add by N.UMEMURA, 20121016
+ SkipFile = "skip.out"
+ ComSkip  = "echo %s >> " + SkipFile
+
  def initialize( pwd, workDir, gSpace )
   @pwd = pwd
   @workDir = workDir
@@ -34,13 +38,33 @@ class ItemDelete
    hid = HandleID.new( @gSpace.getItemHandleFile )
    hid.read
 
+   #### START: Add by N.UMEMURA, 20121010 ####
+   enumber = 0   # Number of Error.
+   iout    = 0   # Count Up, Only When HandleID is Found in ItemHandle.log.
+   #### END:   Add by N.UMEMURA, 20121010 ####
+
    fm = open( mapfile, "w" )
    for i in 0..@fileList.size-1
      filename = @fileList[i].getRelative
      id, n = hid.getID( filename )
-     lm.printf("%s\n", filename )
-     fm.printf("%d %s\n", i+1, id )
-     delList << n
+     # START: Add by N.UMEMURA, 20121010.
+     # Skips, when HandleID is NOT found in ItemHandle.log.
+     if id == nil || n == nil || id == "" || n == ""
+       puts "##ERROR> ItemDelete.rb#make(): HandleID is Not Found in ItenHandle.log!"
+       puts "##ERROR> Skip this File. ------> See Log File: \'skip.out\'"
+       puts "##ERROR> filename = [#{filename}]"
+       puts "##ERROR> id = [#{id}]"
+       puts "##ERROR> n  = [#{n}]"
+       system(sprintf(ComSkip, filename))      ## Write Log
+       enumber = enumber + 1
+     # END: Add by N.UMEMURA, 20121010
+     else
+       lm.printf("%s\n", filename )
+       iout = iout + 1                   # Count Up. Add by N.UMEMURA, 20121010
+       fm.printf("%d %s\n", iout, id )   # Mod by N.UMEMURA, 20121010
+#      fm.printf("%d %s\n", i+1, id )
+       delList << n
+     end
    end
    fm.close
    lm.close
@@ -49,7 +73,8 @@ class ItemDelete
 
    frf = @pwd + "/" + Runfile
    sm = ScriptMaker.new( frf )
-   if @fileList.size > 0
+#  if @fileList.size > 0                 # Mod by N.UMEMURA, 20121010
+   if @fileList.size - enumber > 0       # Mod by N.UMEMURA, 20121010
      ds = DSpace.new( @pwd )
      cstr = ds.getDeleteCommand( mapfile )
      sm.puts( cstr )

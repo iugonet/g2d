@@ -20,7 +20,5 @@ if [ $$ = $IMPORT_PID ]; then
    cp update_list.html /opt/dspace/webapps/iugonet/iugonet/.
  fi
  date >> time.out
-else
- echo "PASS"
 fi
 

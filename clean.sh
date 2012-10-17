@@ -9,3 +9,4 @@ rm -rf runDelete.sh
 rm -rf runClean.sh
 rm -rf *.xml
 rm -rf *.log
+rm -f skip.out

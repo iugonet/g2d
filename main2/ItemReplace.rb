@@ -12,6 +12,10 @@ class ItemReplace
  TempBase = "ReplaceData_"
  Runfile = "runReplace.sh"
 
+ # Add by N.UMEMURA, 20121016
+ SkipFile = "skip.out"
+ ComSkip  = "echo %s >> " + SkipFile
+
  def initialize( pwd, workDir, gSpace )
    @pwd = pwd
    @workDir = workDir
@@ -61,13 +65,57 @@ class ItemReplace
      itemIndex = 0
      for i in 0..addList.size-1
        if i%30000 == 29999
-          cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
-          sm.puts( cstr )
-          tempDir = getTempDir
-          Dir.mkdir( tempDir )
-          mapfile = tempDir + "/mapfile"
-          itemIndex = 0
+         # Mod by N.UMEMURA, 20121011         
+         if File.exist?(mapfile)
+           filesize = File::stat(mapfile).size
+           if filesize != 0
+             cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
+             sm.puts( cstr )
+           end
+         end
+         ## Old Code
+=begin
+         cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
+         sm.puts( cstr )
+=end
+         tempDir = getTempDir
+         Dir.mkdir( tempDir )
+         mapfile = tempDir + "/mapfile"
+         itemIndex = 0
        end
+
+       #### START: MOD Flow-Chart by N.UMEMURA, 20121011
+
+       # Get File Attribute
+       afile = addList[i].getAbsolute
+       rfile = addList[i].getRelative
+
+       # Get HandleID
+       handleIDMD = hashHandleID[rfile]        ## Metadata's HandleID
+
+       # Judge and Exec
+       if handleIDMD == nil || handleIDMD == ""
+         puts "##ERROR> ItemReplace.rb#make(): HandleID is Not Found in ItenHandle.log!"
+         puts "##ERROR> Skip this File. ------> See Log File: \'skip.out\'"
+         puts "##ERROR> rfile      = [#{rfile}]"
+         puts "##ERROR> handleIDMD = [#{handleIDMD}]"
+         system(sprintf(ComSkip, rfile))      ## Write Log
+       else
+         # Create Directory
+         itemIndex = itemIndex + 1
+         itemDir = tempDir + "/" + itemIndex.to_s
+         Dir.mkdir( itemDir )
+         # Set SPASE-XML File into the Directory
+         FileUtils.install( afile, itemDir, :mode=>0644 )
+         makeContentsFile( itemDir, afile )
+         # Convert SPASE-XML to Dublin-Core-XML, and Set DC-XML into the Directory
+         s2d.conv( afile, itemDir )
+         # Write HandleID into mapfile
+         writeMapfile2( mapfile, itemIndex, rfile, handleIDMD )
+       end
+
+       ## Old Code
+=begin
        itemIndex = itemIndex + 1
        afile = addList[i].getAbsolute
        rfile = addList[i].getRelative
@@ -86,11 +134,26 @@ class ItemReplace
 #      writeMapfile( mapfile, itemIndex, rfile )
        writeMapfile2( mapfile, itemIndex, rfile, handleIDMD )
        ######## END  : MOD by STEL, N.UMEMURA 20120823 ########
+=end
+
+       #### END: MOD Flow-Chart by N.UMEMURA, 20121011
 
      end
 
+     # Mod by N.UMEMURA, 20121011
+     if File.exist?(mapfile)
+       filesize = File::stat(mapfile).size
+       if filesize != 0
+         cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
+         sm.puts( cstr )
+       end
+     end
+
+     ## Old Cole
+=begin
      cstr = @ds.getReplaceCommand( handleID, tempDir, mapfile )
      sm.puts( cstr )
+=end
    end
 
    sm.finalize
